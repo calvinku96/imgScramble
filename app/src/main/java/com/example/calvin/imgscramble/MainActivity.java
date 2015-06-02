@@ -1,7 +1,13 @@
 package com.example.calvin.imgscramble;
 
+import java.io.InputStream;
 import java.util.Locale;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -16,7 +22,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
@@ -35,6 +43,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+    private static final int SELECT_PICTURE = 1;
+    private String selectedImagePath;
+    boolean selected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,6 +204,32 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
         }
+    }
+
+    //Scramble Tab
+    public void scrambleGetImage (View v){
+        //Toast.makeText(this, "Getting Image", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, SELECT_PICTURE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we are reponding to
+        ImageView image = (ImageView)findViewById(R.id.scrambleImageView);
+        if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && data!=null){
+            Uri selectedImageUri = data.getData();
+            image.setImageURI(selectedImageUri);
+        }
+
+    }
+
+    public void scrambleStart (View v){
+        Toast.makeText(this, "Scrambling", Toast.LENGTH_SHORT).show();
+    }
+    public void scrambleRandom (View v){
+        Toast.makeText(this, "Random", Toast.LENGTH_SHORT).show();
     }
 
 }
