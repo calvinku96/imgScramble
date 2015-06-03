@@ -23,4 +23,5 @@
     <string name="scramble_radio_descramble">Descramble</string>
     <string name="scramble_show_password">Show Password</string>
     <string name="scramble_copy_to_clipboard">Copy to Clipboard</string>
+    <string name="title_activity_scrambling">ScramblingActivity</string>
 </resources>

@@ -175,18 +175,19 @@ public class MainActivity extends ActionBarActivity {
             }
             if (scramblepassword.getText().toString()==""){
                 //scramblepasswordfilled = false;
-                errcounter++
+                errcounter++;
             }
             if (errcounter>0){
                 Toast.makeText(this, "Please fill in the appropriate information", Toast.LENGTH_SHORT).show();
             }else{
                 String imageuristring = selectedImageUri.toString();
-                Intent intent = new Intent(this, ScrambleActivity.class);
+                Intent intent = new Intent(this, ScramblingActivity.class);
                 Bundle extras = new Bundle();
                 extras.putString("EXTRA_IMAGE", imageuristring);
                 extras.putString("EXTRA_PASS", scramblepassword.getText().toString());
                 extras.putString("EXTRA_ROW", rowtext.getText().toString());
                 extras.putString("EXTRA_COL", coltext.getText().toString());
+                intent.putExtras(extras);
                 startActivity(intent);
             }
 
