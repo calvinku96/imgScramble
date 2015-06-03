@@ -7,17 +7,20 @@
 
     <string name="hello_world">Hello world!</string>
 
-    <string name="tab_scramble">Scramble Tab</string>
-    <string name="tab_descramble">Descramble Tab</string>
+    <string name="tab_scramble">Scramble/Descramble</string>
     <string name="tab_about">About Tab</string>
 
     <string name="action_settings">Settings</string>
 
 
     <string name="scramble_section">Scramble an Image</string>
-    <string name="scramble_button">Scramble!</string>
+    <string name="scramble_button">Start!</string>
     <string name="scramble_password">Password</string>
     <string name="scramble_rows"># Rows</string>
     <string name="scramble_columns"># Cols</string>
     <string name="scramble_random">Random</string>
+    <string name="scramble_radio_scramble">Scramble</string>
+    <string name="scramble_radio_descramble">Descramble</string>
+    <string name="scramble_show_password">Show Password</string>
+    <string name="scramble_copy_to_clipboard">Copy to Clipboard</string>
 </resources>

@@ -1,33 +1,31 @@
 package com.example.calvin.imgscramble;
 
-import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.Locale;
+import java.util.Random;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
+public class MainActivity extends ActionBarActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -44,18 +42,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      */
     ViewPager mViewPager;
     private static final int SELECT_PICTURE = 1;
-    private String selectedImagePath;
     boolean selected = false;
+    private ClipboardManager clipboard;
+    private ClipData clipdata;
+    Uri selectedImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -64,27 +62,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-            }
-        });
-
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
-        }
+        //prevent keyboard automatically popup
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
     }
 
 
@@ -110,21 +90,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in
-        // the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -141,12 +106,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             // Return a PlaceholderFragment (defined as a static inner class below).
             //return PlaceholderFragment.newInstance(position + 1);
 
-            switch (position){
+            switch (position) {
                 case 0:
                     return new ScrambleFragment();
                 case 1:
-                    return new DescrambleFragment();
-                case 2:
                     return new AboutFragment();
             }
             return null;
@@ -154,8 +117,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            // Show 2 total pages.
+            return 2;
         }
 
         @Override
@@ -165,49 +128,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 case 0:
                     return getString(R.string.tab_scramble).toUpperCase(l);
                 case 1:
-                    return getString(R.string.tab_descramble).toUpperCase(l);
-                case 2:
                     return getString(R.string.tab_about).toUpperCase(l);
             }
             return null;
         }
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-    }
-
     //Scramble Tab
-    public void scrambleGetImage (View v){
+    public void scrambleGetImage(View v) {
         //Toast.makeText(this, "Getting Image", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
@@ -217,19 +145,96 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we are reponding to
-        ImageView image = (ImageView)findViewById(R.id.scrambleImageView);
-        if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && data!=null){
-            Uri selectedImageUri = data.getData();
+        ImageView image = (ImageView) findViewById(R.id.scrambleImageView);
+        if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && data != null) {
+            selectedImageUri = data.getData();
             image.setImageURI(selectedImageUri);
+            selected = true;
         }
 
     }
 
-    public void scrambleStart (View v){
-        Toast.makeText(this, "Scrambling", Toast.LENGTH_SHORT).show();
+    public void scrambleStart(View v) {
+        //Toast.makeText(this, "Scrambling", Toast.LENGTH_SHORT).show();
+        if (selected) {
+            //ImageUri to String
+            EditText scramblepassword = (EditText) findViewById(R.id.scramble_password);
+            EditText rowtext = (EditText) findViewById(R.id.scramble_row);
+            EditText coltext = (EditText) findViewById(R.id.scramble_cols);
+            //boolean rowtextfilled = true;
+            //boolean coltextfilled = true;
+            //boolean scramblepasswordfilled = true;
+            int errcounter = 0;
+            if (rowtext.getText().toString()==""){
+                //rowtextfilled = false;
+                errcounter++;
+            }
+            if (coltext.getText().toString()==""){
+                //coltextfilled = false;
+                errcounter++;
+            }
+            if (scramblepassword.getText().toString()==""){
+                //scramblepasswordfilled = false;
+                errcounter++
+            }
+            if (errcounter>0){
+                Toast.makeText(this, "Please fill in the appropriate information", Toast.LENGTH_SHORT).show();
+            }else{
+                String imageuristring = selectedImageUri.toString();
+                Intent intent = new Intent(this, ScrambleActivity.class);
+                Bundle extras = new Bundle();
+                extras.putString("EXTRA_IMAGE", imageuristring);
+                extras.putString("EXTRA_PASS", scramblepassword.getText().toString());
+                extras.putString("EXTRA_ROW", rowtext.getText().toString());
+                extras.putString("EXTRA_COL", coltext.getText().toString());
+                startActivity(intent);
+            }
+
+        }
+        else{
+            Toast.makeText(this, "Image not yet selected",Toast.LENGTH_SHORT).show();
+        }
     }
-    public void scrambleRandom (View v){
-        Toast.makeText(this, "Random", Toast.LENGTH_SHORT).show();
+
+    public void scrambleRandom(View v) {
+        //Toast.makeText(this, "Random", Toast.LENGTH_SHORT).show();
+        Random rand = new Random();
+        BigInteger passint = new BigInteger(100, rand);
+        String pass = passint.toString(36);
+        int row = rand.nextInt(50) + 20;
+        int col = rand.nextInt(50) + 20;
+        EditText scramblepassword = (EditText) findViewById(R.id.scramble_password);
+        EditText rowtext = (EditText) findViewById(R.id.scramble_row);
+        EditText coltext = (EditText) findViewById(R.id.scramble_cols);
+        scramblepassword.setText(pass);
+        rowtext.setText(Integer.toString(row));
+        coltext.setText(Integer.toString(col));
+    }
+
+    public void scrambleCopyPassword(View v) {
+        EditText scramblepassword = (EditText) findViewById(R.id.scramble_password);
+        String cliptext = scramblepassword.getText().toString();
+        clipdata = ClipData.newPlainText("text", cliptext);
+        clipboard.setPrimaryClip(clipdata);
+        Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show();
+    }
+
+    boolean showpasswordstatus = true;
+
+    public void scrambleShowPassword(View v) {
+        //Toast.makeText(this, "Show Password", Toast.LENGTH_SHORT).show();
+        EditText scramblepassword = (EditText) findViewById(R.id.scramble_password);
+        ImageView showpasswordimage = (ImageView) findViewById(R.id.scramble_show_password);
+        if (showpasswordstatus) {
+            //Change imageView
+            scramblepassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            showpasswordimage.setImageResource(R.drawable.ic_visibility_black_24dp);
+            showpasswordstatus = false;
+        } else {
+            scramblepassword.setInputType(129);
+            showpasswordimage.setImageResource(R.drawable.ic_visibility_off_black_24dp);
+            showpasswordstatus = true;
+        }
     }
 
 }
