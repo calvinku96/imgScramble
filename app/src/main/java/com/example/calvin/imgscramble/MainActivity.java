@@ -164,8 +164,9 @@ public class MainActivity extends ActionBarActivity {
             EditText coltext = (EditText) findViewById(R.id.scramble_cols);
             RadioButton descrambleradio = (RadioButton) findViewById(R.id.scramble_radio_descramble);
             String scrambleradiostring = "s";
-            if(descrambleradio.isChecked()){
-                String scramble = "d";
+            boolean descrambleradioisChecked = descrambleradio.isChecked();
+            if(descrambleradioisChecked){
+                scrambleradiostring = "d";
             }
             //boolean rowtextfilled = true;
             //boolean coltextfilled = true;

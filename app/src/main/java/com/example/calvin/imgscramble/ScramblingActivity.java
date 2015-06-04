@@ -3,19 +3,24 @@ package com.example.calvin.imgscramble;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -24,6 +29,14 @@ import java.util.Arrays;
 
 public class ScramblingActivity extends ActionBarActivity {
     final protected static char[] hexArray = "0123456789abcdef".toCharArray();
+    ArrayList<Bitmap> imagearray;
+    int[] permarray;
+    boolean imagearraypresent = false;
+    boolean permarraypresent = false;
+    boolean scrambleboolean = false; //false when scramble, true when descramble
+    String rowstring;
+    String colstring;
+    Bitmap outputimage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +46,12 @@ public class ScramblingActivity extends ActionBarActivity {
         Bundle extras = intent.getExtras();
         String imageuristring = extras.getString("EXTRA_IMAGE");
         String scramblepassword = extras.getString("EXTRA_PASS");
-        String rowstring = extras.getString("EXTRA_ROW");
-        String colstring = extras.getString("EXTRA_COL");
+        rowstring = extras.getString("EXTRA_ROW");
+        colstring = extras.getString("EXTRA_COL");
         String scramblestring = extras.getString("EXTRA_SCRAMBLE");
+        if (scramblestring.equals("d")) {
+            scrambleboolean = true;
+        }
         Uri imageuri = Uri.parse(imageuristring);
         //ImageView image = (ImageView)findViewById(R.id.imageView);
         //image.setImageURI(imageuri);
@@ -43,7 +59,99 @@ public class ScramblingActivity extends ActionBarActivity {
         new HashNum().execute(scramblepassword, rowstring, colstring);
     }
 
+    public void finishHashSplit() {
+        if (imagearraypresent && permarraypresent) {
+            RearrangeImage re = new RearrangeImage(imagearray, permarray, scrambleboolean, Integer.parseInt(rowstring), Integer.parseInt(colstring));
+            createToast("Yay");
+            re.execute("");
+        }
+    }
+
+    private class RearrangeImage extends AsyncTask<String, Void, Bitmap> {
+        ArrayList<Bitmap> imagearray;
+        int[] permarray;
+        boolean scrambleboolean;
+        int row;
+        int col;
+
+        public RearrangeImage(ArrayList<Bitmap> imagearray, int[] permarray, boolean scrambleboolean, int row, int col) {
+            this.imagearray = imagearray;
+            this.permarray = permarray;
+            this.scrambleboolean = scrambleboolean;
+            this.row = row;
+            this.col = col;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            Bitmap[] rearrangedimagearray = new Bitmap[imagearray.size()];
+            if (scrambleboolean) {
+                //find inverse permutation
+                int[] invpermarray = new int[permarray.length];
+                for (int i = 0; i < permarray.length; i++) {
+                    invpermarray[permarray[i]] = i;
+                }
+                permarray = invpermarray;
+            }
+            //rearrange
+            for (int i = 0; i < imagearray.size(); i++) {
+                rearrangedimagearray[permarray[i]] = imagearray.get(i);
+            }
+            //Combine all into one
+            int indivWidth = rearrangedimagearray[0].getWidth();
+            int indivHeight = rearrangedimagearray[0].getHeight();
+            int totalWidth = col * indivWidth;
+            int totalHeight = row * indivHeight;
+
+            Bitmap temp = Bitmap.createBitmap(totalWidth, totalHeight, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(temp);
+            int yCoord = 0;
+            for (int y = 0; y < row; y++) {
+                int xCoord = 0;
+                for (int x = 0; x < col; x++) {
+                    // Add to canvas
+                    canvas.drawBitmap(rearrangedimagearray[x + y * col], (float) xCoord, (float) yCoord, null);
+                    xCoord += indivWidth;
+                }
+                yCoord += indivHeight;
+            }
+            return temp;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmapoutput) {
+            createToast("boo");
+            ImageView image = (ImageView) findViewById(R.id.scrambling_output_image);
+            image.setImageBitmap(bitmapoutput);
+            outputimage = bitmapoutput;
+
+            //save image
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmapoutput.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
+
+            File f = new File(Environment.getExternalStorageDirectory() + File.separator + "test.jpg");
+            try {
+                f.createNewFile();
+                FileOutputStream fo = new FileOutputStream(f);
+                fo.write(bytes.toByteArray());
+                fo.close();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            createToast("Saved");
+        }
+    }
+
+    public void createToast(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
     private class HashNum extends AsyncTask<String, Void, int[]> {
+        @Override
+        protected void onPreExecute() {
+            createToast("Executing Hashum");
+        }
+
         @Override
         protected int[] doInBackground(String... params) {
             String password = params[0];
@@ -58,7 +166,12 @@ public class ScramblingActivity extends ActionBarActivity {
             Factorial fact = new Factorial(0);
             int numdigits = fact.factorial(n).toString(16).length();
             //Give initial hash
-            byte[] hash = password.getBytes(StandardCharsets.UTF_8);
+            byte[] hash;
+            try {
+                hash = password.getBytes("UTF-8");
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             hash = getHashMultiple(2000, hash);
             String output = bytesToHex(hash);
             //Find how long is the lehmer code
@@ -74,24 +187,25 @@ public class ScramblingActivity extends ActionBarActivity {
             output = output.substring(0, numdigits - 1);
 
             //Lehmer
-            BigInteger d = new BigInteger (output,16);
-            int[] code = encode(n,d);
-            int[] perm = ffs2seq(n,code);
+            BigInteger d = new BigInteger(output, 16);
+            int[] code = encode(n, d);
+            int[] perm = ffs2seq(n, code);
             return perm;
         }
 
         @Override
         protected void onPostExecute(int[] outputs) {
-            TextView text = (TextView)findViewById(R.id.scrambling_progress_dialog);
-            text.setText(Arrays.toString(outputs));
+            permarray = outputs;
+            permarraypresent = true;
+            createToast("Finished HashNum");
+            finishHashSplit();
         }
     }
 
     private class SplitImage extends AsyncTask<String, Void, ArrayList<Bitmap>> {
         @Override
         protected void onPreExecute() {
-            TextView text = (TextView) findViewById(R.id.scrambling_progress_dialog);
-            text.setText("In Progress...");
+            createToast("Execute SplitImage");
         }
 
         @Override
@@ -109,9 +223,9 @@ public class ScramblingActivity extends ActionBarActivity {
                 int chunkWidth = decoder.getWidth() / col;
 
                 int yCoord = 0;
-                for (int x = 0; x < row; x++) {
+                for (int y = 0; y < row; y++) {
                     int xCoord = 0;
-                    for (int y = 0; y < col; y++) {
+                    for (int x = 0; x < col; x++) {
                         Bitmap tempimage = decoder.decodeRegion(new Rect(xCoord, yCoord, xCoord + chunkWidth, yCoord + chunkHeight), null);
                         chunkedimages.add(tempimage);
                         xCoord += chunkWidth;
@@ -125,8 +239,12 @@ public class ScramblingActivity extends ActionBarActivity {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Bitmap> chunkedimages) {
+        protected void onPostExecute(ArrayList<Bitmap> output) {
             //Pass the chunkedimages to the scramble image AsyncTask
+            imagearray = output;
+            imagearraypresent = true;
+            createToast("Split Image Finished");
+            finishHashSplit();
         }
     }
 
