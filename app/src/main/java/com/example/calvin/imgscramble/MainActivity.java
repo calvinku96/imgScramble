@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 
@@ -161,6 +162,11 @@ public class MainActivity extends ActionBarActivity {
             EditText scramblepassword = (EditText) findViewById(R.id.scramble_password);
             EditText rowtext = (EditText) findViewById(R.id.scramble_row);
             EditText coltext = (EditText) findViewById(R.id.scramble_cols);
+            RadioButton descrambleradio = (RadioButton) findViewById(R.id.scramble_radio_descramble);
+            String scrambleradiostring = "s";
+            if(descrambleradio.isChecked()){
+                String scramble = "d";
+            }
             //boolean rowtextfilled = true;
             //boolean coltextfilled = true;
             //boolean scramblepasswordfilled = true;
@@ -187,6 +193,7 @@ public class MainActivity extends ActionBarActivity {
                 extras.putString("EXTRA_PASS", scramblepassword.getText().toString());
                 extras.putString("EXTRA_ROW", rowtext.getText().toString());
                 extras.putString("EXTRA_COL", coltext.getText().toString());
+                extras.putString("EXTRA_SCRAMBLE", scrambleradiostring);
                 intent.putExtras(extras);
                 startActivity(intent);
             }
