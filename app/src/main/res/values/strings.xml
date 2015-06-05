@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">imgScramble</string>
 
@@ -23,5 +24,22 @@
     <string name="scramble_radio_descramble">Descramble</string>
     <string name="scramble_show_password">Show Password</string>
     <string name="scramble_copy_to_clipboard">Copy to Clipboard</string>
+
+
+
     <string name="title_activity_scrambling">ScramblingActivity</string>
+    <string name="scrambling_loading">Loading</string>
+    <string name="scrambling_quality">Quality of Image: </string>
+
+    <string name="scrambling_rearrange_image">Rearranging image</string>
+    <string name="scrambling_get_permutation">Getting permutation from password</string>
+    <string name="scrambling_split_image">Splitting image</string>
+    <string name="scrambling_split_image_finish">Finished splitting image</string>
+
+    <string name="scrambling_scramblingSaveImage_saved">Image saved</string>
+    <string name="scrambling_scramblingSaveImage_not_done">Image not done</string>
+
+    <string name="scrambling_send_to">Send To</string>
+
+    <string name="scrambling_scramblingSaveText_saved">Image Saved as Text in /Documents/imgScramble</string>
 </resources>
