@@ -252,7 +252,7 @@ public class ScramblingActivity extends ActionBarActivity {
         today.setToNow();
         String datestring = today.format("%Y-%m%-d-%H:%M:%S");
         String filename = getFileName(imageuri);
-        filename = "imgScramble_text_" + filename.substring(0, filename.length() - 4) + datestring + "-q" + getSeekBarProgress(seekBar) + ".txt";
+        filename = "imgScramble_text_" + filename.substring(0, filename.length() - 4) +"_"+ datestring + "_q" + getSeekBarProgress(seekBar) + ".txt";
         String sdCard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/imgScramble/";
         File newdir = new File(sdCard);
         if (!newdir.exists()) {
@@ -277,7 +277,7 @@ public class ScramblingActivity extends ActionBarActivity {
             today.setToNow();
             String datestring = today.format("%Y-%m-%d-%H:%M:%S");
             String filename = getFileName(imageuri);
-            filename = "imgScramble_" + filename.substring(0, filename.length() - 4) + datestring + "-q" + getSeekBarProgress(seekBar) + ".jpg";
+            filename = "imgScramble_" + filename.substring(0, filename.length() - 4) +"_"+ datestring + "_q" + getSeekBarProgress(seekBar) + ".jpg";
             byte[] imagebytearray = convertImageToJPEG();
             //save image
             String sdCard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/imgScramble/";

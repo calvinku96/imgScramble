@@ -29,6 +29,15 @@
             android:onClick="scrambleGetImage"
             android:scaleType="centerInside"
             android:src="@drawable/add_image" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/scramble_open_camera"
+            android:layout_alignBottom="@+id/scrambleImageView"
+            android:layout_alignRight="@+id/scrambleImageView"
+            android:onClick="openCamera"
+            android:src="@drawable/ic_camera_alt_white_48dp"/>
     </RelativeLayout>
 
     <LinearLayout
