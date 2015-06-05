@@ -294,6 +294,10 @@ public class ScramblingActivity extends ActionBarActivity {
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(f);
+            mediaScanIntent.setData(contentUri);
+            this.sendBroadcast(mediaScanIntent);
             Toast.makeText(this, getString(R.string.scrambling_scramblingSaveImage_saved), Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, getString(R.string.scrambling_scramblingSaveImage_not_done), Toast.LENGTH_SHORT).show();

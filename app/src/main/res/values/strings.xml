@@ -2,12 +2,6 @@
 <resources>
     <string name="app_name">imgScramble</string>
 
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-
-    <string name="hello_world">Hello world!</string>
-
     <string name="tab_scramble">Scramble/Descramble</string>
     <string name="tab_about">About Tab</string>
 
@@ -24,10 +18,11 @@
     <string name="scramble_radio_descramble">Descramble</string>
     <string name="scramble_show_password">Show Password</string>
     <string name="scramble_copy_to_clipboard">Copy to Clipboard</string>
+    <string name="scramble_no_camera">Camera Not Available</string>
 
 
 
-    <string name="title_activity_scrambling">ScramblingActivity</string>
+    <string name="title_activity_scrambling">imgScramble</string>
     <string name="scrambling_loading">Loading</string>
     <string name="scrambling_quality">Quality of Image: </string>
 

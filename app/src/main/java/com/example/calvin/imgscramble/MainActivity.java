@@ -1,13 +1,20 @@
 package com.example.calvin.imgscramble;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -47,6 +54,8 @@ public class MainActivity extends ActionBarActivity {
     private ClipboardManager clipboard;
     private ClipData clipdata;
     Uri selectedImageUri;
+    static final int REQUEST_TAKE_PHOTO = 2;
+    String photofilepath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +161,10 @@ public class MainActivity extends ActionBarActivity {
             image.setImageURI(selectedImageUri);
             selected = true;
         }
+        else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK){
+            image.setImageURI(selectedImageUri);
+            selected = true;
+        }
 
     }
 
@@ -165,28 +178,28 @@ public class MainActivity extends ActionBarActivity {
             RadioButton descrambleradio = (RadioButton) findViewById(R.id.scramble_radio_descramble);
             String scrambleradiostring = "s";
             boolean descrambleradioisChecked = descrambleradio.isChecked();
-            if(descrambleradioisChecked){
+            if (descrambleradioisChecked) {
                 scrambleradiostring = "d";
             }
             //boolean rowtextfilled = true;
             //boolean coltextfilled = true;
             //boolean scramblepasswordfilled = true;
             int errcounter = 0;
-            if (rowtext.getText().toString()==""){
+            if (rowtext.getText().toString() == "") {
                 //rowtextfilled = false;
                 errcounter++;
             }
-            if (coltext.getText().toString()==""){
+            if (coltext.getText().toString() == "") {
                 //coltextfilled = false;
                 errcounter++;
             }
-            if (scramblepassword.getText().toString()==""){
+            if (scramblepassword.getText().toString() == "") {
                 //scramblepasswordfilled = false;
                 errcounter++;
             }
-            if (errcounter>0){
+            if (errcounter > 0) {
                 Toast.makeText(this, "Please fill in the appropriate information", Toast.LENGTH_SHORT).show();
-            }else{
+            } else {
                 String imageuristring = selectedImageUri.toString();
                 Intent intent = new Intent(this, ScramblingActivity.class);
                 Bundle extras = new Bundle();
@@ -199,9 +212,8 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
 
-        }
-        else{
-            Toast.makeText(this, "Image not yet selected",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Image not yet selected", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -244,6 +256,51 @@ public class MainActivity extends ActionBarActivity {
             showpasswordimage.setImageResource(R.drawable.ic_visibility_off_black_24dp);
             showpasswordstatus = true;
         }
+    }
+
+    public void openCamera(View v) {
+        PackageManager packageManager = this.getPackageManager();
+        if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            // Ensure that there's a camera activity to handle the intent
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                //Create the File where the photo should go
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                selectedImageUri = Uri.fromFile(photoFile);
+                if (photoFile != null) {
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, selectedImageUri);
+                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                }
+
+            }
+        } else {
+            Toast.makeText(this, getString(R.string.scramble_no_camera), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    String mCurrentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        //Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        String sdCard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/imgScramble/Source/";
+        File storageDir = new File(sdCard);
+        if (!storageDir.exists()) {
+            storageDir.mkdirs();
+        }
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        selectedImageUri = Uri.fromFile(image);
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        mediaScanIntent.setData(selectedImageUri);
+        this.sendBroadcast(mediaScanIntent);
+        return image;
     }
 
 }
