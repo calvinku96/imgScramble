@@ -1,27 +1,19 @@
 package com.example.calvin.imgscramble;
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Random;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +23,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Random;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -175,8 +175,12 @@ public class MainActivity extends ActionBarActivity {
             EditText scramblepassword = (EditText) findViewById(R.id.scramble_password);
             EditText rowtext = (EditText) findViewById(R.id.scramble_row);
             EditText coltext = (EditText) findViewById(R.id.scramble_cols);
+            EditText imagewidth = (EditText) findViewById(R.id.scramble_image_width);
+            EditText imageheight = (EditText) findViewById(R.id.scramble_image_height);
             RadioButton descrambleradio = (RadioButton) findViewById(R.id.scramble_radio_descramble);
             String scrambleradiostring = "s";
+            String scrambleimagewidth = imagewidth.getText().toString();
+            String scrambleimageheight = imageheight.getText().toString();
             boolean descrambleradioisChecked = descrambleradio.isChecked();
             if (descrambleradioisChecked) {
                 scrambleradiostring = "d";
@@ -207,6 +211,8 @@ public class MainActivity extends ActionBarActivity {
                 extras.putString("EXTRA_PASS", scramblepassword.getText().toString());
                 extras.putString("EXTRA_ROW", rowtext.getText().toString());
                 extras.putString("EXTRA_COL", coltext.getText().toString());
+                extras.putString("EXTRA_WIDTH", scrambleimagewidth);
+                extras.putString("EXTRA_HEIGHT", scrambleimageheight);
                 extras.putString("EXTRA_SCRAMBLE", scrambleradiostring);
                 intent.putExtras(extras);
                 startActivity(intent);

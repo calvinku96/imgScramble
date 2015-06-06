@@ -19,6 +19,9 @@
     <string name="scramble_show_password">Show Password</string>
     <string name="scramble_copy_to_clipboard">Copy to Clipboard</string>
     <string name="scramble_no_camera">Camera Not Available</string>
+    <string name="scramble_image_width_hint">Width</string>
+    <string name="scramble_image_height_hint">Height</string>
+    <string name="scramble_no_widthheight">Input Width and Height to Descramble</string>
 
 
 
@@ -33,8 +36,13 @@
 
     <string name="scrambling_scramblingSaveImage_saved">Image saved</string>
     <string name="scrambling_scramblingSaveImage_not_done">Image not done</string>
+    <string name="scrambling_image_widthheight">WidthHeight</string>
 
     <string name="scrambling_send_to">Send To</string>
 
     <string name="scrambling_scramblingSaveText_saved">Image Saved as Text in /Documents/imgScramble</string>
+    <string name="scrambling_widthheight_text">You will need to input youe password, row and column number.
+ If you want to send through apps that compress images, also input\n</string>
+    <string name="scrambling_widthheight_text2">as width and</string>
+    <string name="scrambling_widthheight_text3">as height.</string>
 </resources>

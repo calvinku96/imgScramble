@@ -78,13 +78,15 @@ public class ScramblingActivity extends ActionBarActivity {
         rowstring = extras.getString("EXTRA_ROW");
         colstring = extras.getString("EXTRA_COL");
         String scramblestring = extras.getString("EXTRA_SCRAMBLE");
+        String imagewidthstring = extras.getString("EXTRA_WIDTH");
+        String imageheightstring = extras.getString("EXTRA_HEIGHT");
         if (scramblestring.equals("d")) {
             scrambleboolean = true;
         }
         imageuri = Uri.parse(imageuristring);
         LinearLayout layout = (LinearLayout) findViewById(R.id.scrambling_picture_parent_layout);
         layout.setVisibility(View.GONE);
-        new SplitImage().execute(imageuristring, rowstring, colstring);
+        new SplitImage().execute(imageuristring, rowstring, colstring, scramblestring, imagewidthstring,imageheightstring);
         new HashNum().execute(scramblepassword, rowstring, colstring);
     }
 
@@ -130,6 +132,8 @@ public class ScramblingActivity extends ActionBarActivity {
             scramblingdone = true;
             RelativeLayout progresslayout = (RelativeLayout) findViewById(R.id.scrambling_loading_layout);
             progresslayout.setVisibility(View.GONE);
+            TextView widthheight = (TextView)findViewById(R.id.scrambling_width_height);
+            widthheight.setText(getString(R.string.scrambling_widthheight_text)+outputimage.getWidth()+" "+getString(R.string.scrambling_widthheight_text2)+" "+outputimage.getHeight()+" "+getString(R.string.scrambling_widthheight_text3));
         }
     }
 

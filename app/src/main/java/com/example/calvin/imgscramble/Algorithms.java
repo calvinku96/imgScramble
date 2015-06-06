@@ -159,6 +159,28 @@ public class Algorithms {
             //Store all the image chunks
             ArrayList<Bitmap> chunkedimages = new ArrayList<Bitmap>(row * col);
             //Convert Uri to Bitmap
+        if (!(params[4].equals("") && params[5].equals(""))) {
+            try {
+                BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(imageInputStream, false);
+                int chunkWidth = Integer.parseInt(params[4]) / col;
+                int chunkHeight = Integer.parseInt(params[5]) / row;
+                Bitmap wholeimage = decoder.decodeRegion(new Rect(0, 0, decoder.getWidth(), decoder.getHeight()), null);
+                Bitmap scaledimage = Bitmap.createScaledBitmap(wholeimage, Integer.parseInt(params[4]), Integer.parseInt(params[5]), false);
+
+                int yCoord = 0;
+                for (int y = 0; y < row; y++) {
+                    int xCoord = 0;
+                    for (int x = 0; x < col; x++) {
+                        Bitmap tempimage = Bitmap.createBitmap(scaledimage, xCoord, yCoord, chunkWidth, chunkHeight);
+                        chunkedimages.add(tempimage);
+                        xCoord += chunkWidth;
+                    }
+                    yCoord += chunkHeight;
+                }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        } else {
             try {
                 BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(imageInputStream, false);
                 int chunkHeight = decoder.getHeight() / row;
@@ -177,6 +199,8 @@ public class Algorithms {
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
-            return chunkedimages;
+
+        }
+        return chunkedimages;
     }
 }
