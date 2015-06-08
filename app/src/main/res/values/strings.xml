@@ -41,7 +41,7 @@
     <string name="scrambling_send_to">Send To</string>
 
     <string name="scrambling_scramblingSaveText_saved">Image Saved as Text in /Documents/imgScramble</string>
-    <string name="scrambling_widthheight_text">You will need to input youe password, row and column number.
+    <string name="scrambling_widthheight_text">You will need to input your password, row and column number.
  If you want to send through apps that compress images, also input\n</string>
     <string name="scrambling_widthheight_text2">as width and</string>
     <string name="scrambling_widthheight_text3">as height.</string>

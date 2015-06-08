@@ -159,7 +159,7 @@ public class Algorithms {
             //Store all the image chunks
             ArrayList<Bitmap> chunkedimages = new ArrayList<Bitmap>(row * col);
             //Convert Uri to Bitmap
-        if (!(params[4].equals("") && params[5].equals(""))) {
+        if (!(params[4].equals("") && params[5].equals(""))&& params[3].equals("d")) {
             try {
                 BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(imageInputStream, false);
                 int chunkWidth = Integer.parseInt(params[4]) / col;
