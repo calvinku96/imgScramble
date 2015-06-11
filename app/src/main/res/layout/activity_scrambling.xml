@@ -96,13 +96,6 @@
                 android:orientation="horizontal">
 
                 <ImageButton
-                    android:id="@+id/scrambling_save_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="scramblingSaveText"
-                    android:src="@drawable/ic_insert_drive_file_black_36dp" />
-
-                <ImageButton
                     android:id="@+id/scrambling_save_to_file"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

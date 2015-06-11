@@ -171,7 +171,7 @@ public class Algorithms {
                 for (int y = 0; y < row; y++) {
                     int xCoord = 0;
                     for (int x = 0; x < col; x++) {
-                        Bitmap tempimage = Bitmap.createBitmap(scaledimage, xCoord, yCoord, chunkWidth, chunkHeight);
+                        Bitmap tempimage = Bitmap.createBitmap(scaledimage, xCoord , yCoord, chunkWidth, chunkHeight);
                         chunkedimages.add(tempimage);
                         xCoord += chunkWidth;
                     }
