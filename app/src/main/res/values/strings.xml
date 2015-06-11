@@ -3,9 +3,9 @@
     <string name="app_name">imgScramble</string>
 
     <string name="tab_scramble">Scramble/Descramble</string>
-    <string name="tab_about">About Tab</string>
+    <string name="tab_about">Help/About</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_help">Help/About</string>
 
 
     <string name="scramble_section">Scramble an Image</string>

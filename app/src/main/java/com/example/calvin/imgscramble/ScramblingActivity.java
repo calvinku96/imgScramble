@@ -5,12 +5,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.text.format.Time;
-import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -192,7 +191,7 @@ public class ScramblingActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_scrambling, menu);
+        //getMenuInflater().inflate(R.menu.menu_scrambling, menu);
         return true;
     }
 
@@ -204,9 +203,6 @@ public class ScramblingActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
