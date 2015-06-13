@@ -74,6 +74,8 @@ public class MainActivity extends ActionBarActivity {
 
         //prevent keyboard automatically popup
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        //clipboard
         clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
     }
 

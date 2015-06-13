@@ -98,6 +98,13 @@
                 android:orientation="horizontal">
 
                 <ImageButton
+                    android:id="@+id/scrambling_clipboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_content_copy_black_36dp"
+                    android:onClick="scramblingCopyImage"/>
+
+                <ImageButton
                     android:id="@+id/scrambling_save_to_file"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -1,5 +1,7 @@
 package com.example.calvin.imgscramble;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -13,6 +15,7 @@ import android.text.format.Time;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -40,6 +43,9 @@ public class ScramblingActivity extends ActionBarActivity {
     boolean scramblingdone = false;
     Uri imageuri;
     SeekBar seekBar;
+    private ClipboardManager clipboard;
+    private ClipData clipdata;
+    String copystring;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +91,11 @@ public class ScramblingActivity extends ActionBarActivity {
         imageuri = Uri.parse(imageuristring);
         LinearLayout layout = (LinearLayout) findViewById(R.id.scrambling_picture_parent_layout);
         layout.setVisibility(View.GONE);
-        new SplitImage().execute(imageuristring, rowstring, colstring, scramblestring, imagewidthstring,imageheightstring);
+        new SplitImage().execute(imageuristring, rowstring, colstring, scramblestring, imagewidthstring, imageheightstring);
         new HashNum().execute(scramblepassword, rowstring, colstring);
+
+        //clipboard
+        clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
     }
 
     public int getSeekBarProgress(SeekBar seekBar) {
@@ -133,6 +142,7 @@ public class ScramblingActivity extends ActionBarActivity {
             progresslayout.setVisibility(View.GONE);
             TextView widthheight = (TextView)findViewById(R.id.scrambling_width_height);
             widthheight.setText(getString(R.string.scrambling_widthheight_text)+outputimage.getWidth()+" "+getString(R.string.scrambling_widthheight_text2)+" "+outputimage.getHeight()+" "+getString(R.string.scrambling_widthheight_text3));
+            copystring = rowstring + " " + colstring + " " + Integer.toString(outputimage.getWidth()) + " " + Integer.toString(outputimage.getHeight());
         }
     }
 
@@ -304,6 +314,11 @@ public class ScramblingActivity extends ActionBarActivity {
         } else {
             Toast.makeText(this, getString(R.string.scrambling_scramblingSaveImage_not_done), Toast.LENGTH_SHORT).show();
         }
+    }
+    public void scramblingCopyImage(View v){
+        clipdata = ClipData.newPlainText("text", copystring);
+        clipboard.setPrimaryClip(clipdata);
+        Toast.makeText(this, getString(R.string.scrambling_copied), Toast.LENGTH_SHORT).show();
     }
 
 }
