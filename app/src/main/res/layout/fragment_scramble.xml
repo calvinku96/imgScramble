@@ -3,8 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="5">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/scrambleImageViewLayout"
@@ -13,7 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_weight="3"
+        android:layout_weight="5"
         android:background="#000000"
         android:gravity="center">
 
@@ -44,56 +43,84 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_weight="4">
 
         <ScrollView
             android:id="@+id/scrollView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/scramble_password"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_toLeftOf="@+id/scramble_row"
-                    android:layout_toStartOf="@+id/scramble_row"
-                    android:ems="10"
-                    android:hint="@string/scramble_password"
-                    android:inputType="textPassword" />
+                    android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/scramble_row"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/scramble_cols"
-                    android:layout_toStartOf="@+id/scramble_cols"
-                    android:width="60dp"
-                    android:ems="10"
-                    android:hint="@string/scramble_rows"
-                    android:inputType="number" />
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3">
 
-                <EditText
-                    android:id="@+id/scramble_cols"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:width="60dp"
-                    android:ems="10"
-                    android:hint="@string/scramble_columns"
-                    android:inputType="number" />
+                        <EditText
+                            android:id="@+id/scramble_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/scramble_password"
+                            android:inputType="textPassword" />
+
+                        <ImageView
+                            android:id="@+id/scramble_show_password"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/scramble_password"
+                            android:layout_alignRight="@+id/scramble_password"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginRight="5dp"
+                            android:clickable="true"
+                            android:onClick="scrambleShowPassword"
+                            android:src="@drawable/ic_visibility_off_black_24dp" />
+
+                        <ImageView
+                            android:id="@+id/scramble_copy_password"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/scramble_show_password"
+                            android:layout_toLeftOf="@+id/scramble_show_password"
+                            android:clickable="true"
+                            android:onClick="scrambleCopyPassword"
+                            android:src="@drawable/ic_content_copy_black_24dp" />
+
+                    </RelativeLayout>
+
+                    <EditText
+                        android:id="@+id/scramble_row"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:hint="@string/scramble_rows"
+                        android:inputType="number" />
+
+                    <EditText
+                        android:id="@+id/scramble_cols"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:hint="@string/scramble_columns"
+                        android:inputType="number" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/radio_group_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/scramble_password"
                     android:gravity="center"
                     android:orientation="horizontal">
                     <RadioGroup
@@ -107,15 +134,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
+                        android:onClick="scrambleScrambleOnClick"
                         android:text="@string/scramble_radio_scramble" />
 
                     <RadioButton
                         android:id="@+id/scramble_radio_descramble"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="scrambleDescrambleOnClick"
                         android:text="@string/scramble_radio_descramble" />
                     </RadioGroup>
 
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/scramble_image_widthheight_layout">
                     <EditText
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -133,17 +168,53 @@
                         android:id="@+id/scramble_image_height"
                         android:layout_weight="1"
                         android:hint="@string/scramble_image_height_hint" />
+                    </LinearLayout>
 
+                </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/scramble_image_quality_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/scramble_image_quality_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/scramble_option_pre" />
+
+                    <SeekBar
+                        android:id="@+id/scramble_image_quality_seekBar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="4"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:indeterminate="false" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/scramble_options" />
+
+                    <Spinner
+                        android:id="@+id/scramble_option_spinner"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:spinnerMode="dialog" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/scramblebutton_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@+id/radio_group_layout"
                     android:orientation="horizontal"
                     android:weightSum="2">
 
@@ -151,8 +222,6 @@
                         android:id="@+id/scramble_scramble"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
                         android:layout_gravity="center_vertical"
                         android:layout_weight="1"
                         android:onClick="scrambleStart"
@@ -169,30 +238,8 @@
 
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/scramble_show_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/scramble_password"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_toLeftOf="@+id/scramble_row"
-                    android:layout_toStartOf="@+id/scramble_row"
-                    android:clickable="true"
-                    android:onClick="scrambleShowPassword"
-                    android:src="@drawable/ic_visibility_off_black_24dp" />
 
-                <ImageView
-                    android:id="@+id/scramble_copy_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/scramble_show_password"
-                    android:layout_toLeftOf="@+id/scramble_show_password"
-                    android:clickable="true"
-                    android:onClick="scrambleCopyPassword"
-                    android:src="@drawable/ic_content_copy_black_24dp" />
-
-            </RelativeLayout>
+            </LinearLayout>
         </ScrollView>
 
     </LinearLayout>

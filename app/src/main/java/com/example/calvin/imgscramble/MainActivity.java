@@ -1,5 +1,6 @@
 package com.example.calvin.imgscramble;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -19,9 +20,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.File;
@@ -56,6 +60,7 @@ public class MainActivity extends ActionBarActivity {
     Uri selectedImageUri;
     static final int REQUEST_TAKE_PHOTO = 2;
     String photofilepath;
+    int scrambleoption;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,6 +210,7 @@ public class MainActivity extends ActionBarActivity {
                 Toast.makeText(this, "Please fill in the appropriate information", Toast.LENGTH_SHORT).show();
             } else {
                 String imageuristring = selectedImageUri.toString();
+                Spinner spinner = (Spinner) findViewById(R.id.scramble_option_spinner);
                 Intent intent = new Intent(this, ScramblingActivity.class);
                 Bundle extras = new Bundle();
                 extras.putString("EXTRA_IMAGE", imageuristring);
@@ -214,6 +220,7 @@ public class MainActivity extends ActionBarActivity {
                 extras.putString("EXTRA_WIDTH", scrambleimagewidth);
                 extras.putString("EXTRA_HEIGHT", scrambleimageheight);
                 extras.putString("EXTRA_SCRAMBLE", scrambleradiostring);
+                extras.putString("EXTRA_OPTIONS", Integer.toString(spinner.getSelectedItemPosition()));
                 intent.putExtras(extras);
                 startActivity(intent);
             }
@@ -307,6 +314,19 @@ public class MainActivity extends ActionBarActivity {
         mediaScanIntent.setData(selectedImageUri);
         this.sendBroadcast(mediaScanIntent);
         return image;
+    }
+
+    public void scrambleScrambleOnClick (View v){
+        EditText widthedittext = (EditText) findViewById(R.id.scramble_image_width);
+        EditText heightedittext = (EditText) findViewById(R.id.scramble_image_height);
+        widthedittext.setEnabled(false);
+        heightedittext.setEnabled(false);
+    }
+    public void scrambleDescrambleOnClick (View v){
+        EditText widthedittext = (EditText) findViewById(R.id.scramble_image_width);
+        EditText heightedittext = (EditText) findViewById(R.id.scramble_image_height);
+        widthedittext.setEnabled(true);
+        heightedittext.setEnabled(true);
     }
 
 }

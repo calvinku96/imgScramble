@@ -22,7 +22,18 @@
     <string name="scramble_image_width_hint">Width</string>
     <string name="scramble_image_height_hint">Height</string>
     <string name="scramble_no_widthheight">Input Width and Height to Descramble</string>
-
+    <string name="scramble_option_pre">Number of Rows and Columns: </string>
+    <string name="scramble_options">Options: </string>
+    <string-array name="scramble_options_array">
+        <item>Generate number of rows and columns automatically from password</item>
+        <item>Pick number of rows and columns, but may be adjusted up due to image dimension constraint</item>
+        <item>Pick number of rows and columns, crop image to adjust to selected number of rows and columns</item>
+    </string-array>
+    <string name="scramble_option_0">Very Coarse</string>
+    <string name="scramble_option_1">Coarse</string>
+    <string name="scramble_option_2">Normal</string>
+    <string name="scramble_option_3">Fine</string>
+    <string name="scramble_option_4">Very Fine</string>
 
 
     <string name="title_activity_scrambling">imgScramble</string>

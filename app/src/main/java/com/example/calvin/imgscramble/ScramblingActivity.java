@@ -46,6 +46,7 @@ public class ScramblingActivity extends ActionBarActivity {
     private ClipboardManager clipboard;
     private ClipData clipdata;
     String copystring;
+    String optionstring;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,7 @@ public class ScramblingActivity extends ActionBarActivity {
         String scramblestring = extras.getString("EXTRA_SCRAMBLE");
         String imagewidthstring = extras.getString("EXTRA_WIDTH");
         String imageheightstring = extras.getString("EXTRA_HEIGHT");
+        optionstring = extras.getString("EXTRA_OPTIONS");
         if (scramblestring.equals("d")) {
             scrambleboolean = true;
         }
