@@ -113,6 +113,7 @@ public class ScrambleFragment extends Fragment {
                     rowedittext.setVisibility(View.VISIBLE);
                     coledittext.setVisibility(View.VISIBLE);
                     seekBarlayout.setVisibility(View.GONE);
+                    return;
             }
             return;
         }
