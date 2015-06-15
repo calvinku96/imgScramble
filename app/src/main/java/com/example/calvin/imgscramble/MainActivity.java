@@ -1,6 +1,5 @@
 package com.example.calvin.imgscramble;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -20,10 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -170,7 +167,6 @@ public class MainActivity extends ActionBarActivity {
             image.setImageURI(selectedImageUri);
             selected = true;
         }
-
     }
 
     public void scrambleStart(View v) {
@@ -187,6 +183,7 @@ public class MainActivity extends ActionBarActivity {
             String scrambleimagewidth = imagewidth.getText().toString();
             String scrambleimageheight = imageheight.getText().toString();
             boolean descrambleradioisChecked = descrambleradio.isChecked();
+            Spinner spinner = (Spinner) findViewById(R.id.scramble_option_spinner);
             if (descrambleradioisChecked) {
                 scrambleradiostring = "d";
             }
@@ -194,15 +191,17 @@ public class MainActivity extends ActionBarActivity {
             //boolean coltextfilled = true;
             //boolean scramblepasswordfilled = true;
             int errcounter = 0;
-            if (rowtext.getText().toString() == "") {
+            if (spinner.getSelectedItemPosition() == 2 || spinner.getSelectedItemPosition() == 3 || spinner.getSelectedItemPosition() == 4) {
+                if (rowtext.getText().toString().equals("")) {
                 //rowtextfilled = false;
                 errcounter++;
             }
-            if (coltext.getText().toString() == "") {
+                if (coltext.getText().toString().equals("")) {
                 //coltextfilled = false;
                 errcounter++;
+                }
             }
-            if (scramblepassword.getText().toString() == "") {
+            if (scramblepassword.getText().toString().equals("")) {
                 //scramblepasswordfilled = false;
                 errcounter++;
             }
@@ -210,7 +209,6 @@ public class MainActivity extends ActionBarActivity {
                 Toast.makeText(this, "Please fill in the appropriate information", Toast.LENGTH_SHORT).show();
             } else {
                 String imageuristring = selectedImageUri.toString();
-                Spinner spinner = (Spinner) findViewById(R.id.scramble_option_spinner);
                 Intent intent = new Intent(this, ScramblingActivity.class);
                 Bundle extras = new Bundle();
                 extras.putString("EXTRA_IMAGE", imageuristring);

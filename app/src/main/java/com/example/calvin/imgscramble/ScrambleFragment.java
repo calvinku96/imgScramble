@@ -73,6 +73,7 @@ public class ScrambleFragment extends Fragment {
 
         // Init SeekBar Layout
         seekBarlayout = (LinearLayout) a.findViewById(R.id.scramble_image_quality_layout);
+        seekBarlayout.setVisibility(View.GONE);
         return a;
     }
 
@@ -84,24 +85,36 @@ public class ScrambleFragment extends Fragment {
             // parent.getItemAtPosition(pos)
             switch (pos) {
                 case 0:
+                    //Remove Rows and columns, remove seekBar
+                    rowedittext.setVisibility(View.GONE);
+                    coledittext.setVisibility(View.GONE);
+                    seekBarlayout.setVisibility(View.GONE);
+                    return;
+                case 1:
                     // Remove Rows and columns
                     rowedittext.setVisibility(View.GONE);
                     coledittext.setVisibility(View.GONE);
                     // Set to visible seekBar
                     seekBarlayout.setVisibility(View.VISIBLE);
                     return;
-                case 1:
+                case 2:
                     // Set to visible Rows and columns and remove seekBar
                     rowedittext.setVisibility(View.VISIBLE);
                     coledittext.setVisibility(View.VISIBLE);
                     seekBarlayout.setVisibility(View.GONE);
                     return;
-                case 2:
+                case 3:
                     // Remove seekBar and set to visible Rows and columns
                     rowedittext.setVisibility(View.VISIBLE);
                     coledittext.setVisibility(View.VISIBLE);
                     seekBarlayout.setVisibility(View.GONE);
+                    return;
+                case 4:
+                    rowedittext.setVisibility(View.VISIBLE);
+                    coledittext.setVisibility(View.VISIBLE);
+                    seekBarlayout.setVisibility(View.GONE);
             }
+            return;
         }
 
         public void onNothingSelected(AdapterView<?> parent) {
