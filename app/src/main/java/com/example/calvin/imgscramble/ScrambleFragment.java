@@ -14,12 +14,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-/**
- * Created by calvin on 6/2/15.
- */
 public class ScrambleFragment extends Fragment {
-
-
     String[] OptionList;
     TextView qualitytext;
     SeekBar seekBar;
@@ -30,12 +25,15 @@ public class ScrambleFragment extends Fragment {
     EditText heightedittext;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState){
         View a = inflater.inflate(R.layout.fragment_scramble, container, false);
         Spinner optionspinner = (Spinner) a.findViewById(R.id.scramble_option_spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> optionspinneradapter = ArrayAdapter.createFromResource(this.getActivity(),
-                R.array.scramble_options_array, R.layout.spinner_textview);
+        ArrayAdapter<CharSequence> optionspinneradapter;
+        optionspinneradapter = ArrayAdapter.createFromResource(this.getActivity(),
+                R.array.scramble_options_array,
+                R.layout.spinner_textview);
         // Specify the layout to use when the list of choices appears
         optionspinneradapter.setDropDownViewResource(R.layout.spinner_dropdown);
         // Apply the adapter to the spinner
@@ -61,7 +59,7 @@ public class ScrambleFragment extends Fragment {
         // Init SeekBar
         qualitytext = (TextView) a.findViewById(R.id.scramble_image_quality_text);
         seekBar = (SeekBar) a.findViewById(R.id.scramble_image_quality_seekBar);
-        seekBar.setOnSeekBarChangeListener(new seekbarlistener());
+        seekBar.setOnSeekBarChangeListener(new SeekBarListener());
         seekBar.setProgress(3);
         qualitytext.setText(getString(R.string.scramble_option_pre) + OptionList[3]);
 
@@ -77,8 +75,9 @@ public class ScrambleFragment extends Fragment {
         return a;
     }
 
-    //Spinner Listener
-
+    /**
+     * SpinnerActivity -- Spinner Listener
+     */
     class SpinnerActivity extends Activity implements AdapterView.OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
             // An item was selected. You can retrieve the selected item using
@@ -97,19 +96,7 @@ public class ScrambleFragment extends Fragment {
                     // Set to visible seekBar
                     seekBarlayout.setVisibility(View.VISIBLE);
                     return;
-                case 2:
-                    // Set to visible Rows and columns and remove seekBar
-                    rowedittext.setVisibility(View.VISIBLE);
-                    coledittext.setVisibility(View.VISIBLE);
-                    seekBarlayout.setVisibility(View.GONE);
-                    return;
-                case 3:
-                    // Remove seekBar and set to visible Rows and columns
-                    rowedittext.setVisibility(View.VISIBLE);
-                    coledittext.setVisibility(View.VISIBLE);
-                    seekBarlayout.setVisibility(View.GONE);
-                    return;
-                case 4:
+               case 2:
                     rowedittext.setVisibility(View.VISIBLE);
                     coledittext.setVisibility(View.VISIBLE);
                     seekBarlayout.setVisibility(View.GONE);
@@ -123,7 +110,10 @@ public class ScrambleFragment extends Fragment {
         }
     }
 
-    class seekbarlistener implements SeekBar.OnSeekBarChangeListener {
+    /**
+     * SeekBarListener
+     */
+    class SeekBarListener implements SeekBar.OnSeekBarChangeListener {
         int progress = 0;
 
         @Override

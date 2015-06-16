@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -56,8 +57,8 @@ public class MainActivity extends ActionBarActivity {
     private ClipData clipdata;
     Uri selectedImageUri;
     static final int REQUEST_TAKE_PHOTO = 2;
-    String photofilepath;
-    int scrambleoption;
+    boolean showpasswordstatus = true;
+    String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,10 +96,9 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
 
-
+        //No Options Menu
         return super.onOptionsItemSelected(item);
     }
 
@@ -117,7 +117,6 @@ public class MainActivity extends ActionBarActivity {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             //return PlaceholderFragment.newInstance(position + 1);
-
             switch (position) {
                 case 0:
                     return new ScrambleFragment();
@@ -146,7 +145,9 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    //Scramble Tab
+    /**
+     * Scramble Tab
+     */
     public void scrambleGetImage(View v) {
         //Toast.makeText(this, "Getting Image", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -154,6 +155,12 @@ public class MainActivity extends ActionBarActivity {
         startActivityForResult(intent, SELECT_PICTURE);
     }
 
+    /**
+     * onActivityResult -- Receive the image after it is selected and post in ImageView
+     * @param requestCode SELECT_PICTURE - Take from storage, REQUEST_TAKE_PHOTO - Get from camera
+     * @param resultCode RESULT_OK - Only accepted otherwise ignore
+     * @param data Intent
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we are reponding to
@@ -169,29 +176,40 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * scrambleStart -- Checks for input fields, Make intent
+     * @param v
+     */
     public void scrambleStart(View v) {
         //Toast.makeText(this, "Scrambling", Toast.LENGTH_SHORT).show();
+        //Image Selected
         if (selected) {
             //ImageUri to String
+            //Get all the fields to check
             EditText scramblepassword = (EditText) findViewById(R.id.scramble_password);
             EditText rowtext = (EditText) findViewById(R.id.scramble_row);
             EditText coltext = (EditText) findViewById(R.id.scramble_cols);
             EditText imagewidth = (EditText) findViewById(R.id.scramble_image_width);
             EditText imageheight = (EditText) findViewById(R.id.scramble_image_height);
-            RadioButton descrambleradio = (RadioButton) findViewById(R.id.scramble_radio_descramble);
+            RadioButton descrambleradio;
+            descrambleradio = (RadioButton) findViewById(R.id.scramble_radio_descramble);
             String scrambleradiostring = "s";
             String scrambleimagewidth = imagewidth.getText().toString();
             String scrambleimageheight = imageheight.getText().toString();
             boolean descrambleradioisChecked = descrambleradio.isChecked();
             Spinner spinner = (Spinner) findViewById(R.id.scramble_option_spinner);
+            SeekBar imagequalityseekbar;
+            imagequalityseekbar = (SeekBar) findViewById(R.id.scramble_image_quality_seekBar);
             if (descrambleradioisChecked) {
                 scrambleradiostring = "d";
             }
+            //Maybe Included in Upcomming Feature
             //boolean rowtextfilled = true;
             //boolean coltextfilled = true;
             //boolean scramblepasswordfilled = true;
             int errcounter = 0;
-            if (spinner.getSelectedItemPosition() == 2 || spinner.getSelectedItemPosition() == 3 || spinner.getSelectedItemPosition() == 4) {
+            //If we pick numbers of rows and columns options
+            if (spinner.getSelectedItemPosition() == 2) {
                 if (rowtext.getText().toString().equals("")) {
                 //rowtextfilled = false;
                 errcounter++;
@@ -201,13 +219,17 @@ public class MainActivity extends ActionBarActivity {
                 errcounter++;
                 }
             }
+            //Check password filled
             if (scramblepassword.getText().toString().equals("")) {
                 //scramblepasswordfilled = false;
                 errcounter++;
             }
             if (errcounter > 0) {
-                Toast.makeText(this, "Please fill in the appropriate information", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,
+                        "Please fill in the appropriate information",
+                        Toast.LENGTH_SHORT).show();
             } else {
+                //Bundle all the info to the intent
                 String imageuristring = selectedImageUri.toString();
                 Intent intent = new Intent(this, ScramblingActivity.class);
                 Bundle extras = new Bundle();
@@ -218,16 +240,24 @@ public class MainActivity extends ActionBarActivity {
                 extras.putString("EXTRA_WIDTH", scrambleimagewidth);
                 extras.putString("EXTRA_HEIGHT", scrambleimageheight);
                 extras.putString("EXTRA_SCRAMBLE", scrambleradiostring);
-                extras.putString("EXTRA_OPTIONS", Integer.toString(spinner.getSelectedItemPosition()));
+                extras.putString("EXTRA_SEEKBAR",
+                        Integer.toString(imagequalityseekbar.getProgress()));
+                extras.putString("EXTRA_OPTIONS",
+                        Integer.toString(spinner.getSelectedItemPosition()));
                 intent.putExtras(extras);
                 startActivity(intent);
             }
 
         } else {
+            //Toast no image selected
             Toast.makeText(this, "Image not yet selected", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * scrambleRandom -- Randomize the inputs
+     * @param v
+     */
     public void scrambleRandom(View v) {
         //Toast.makeText(this, "Random", Toast.LENGTH_SHORT).show();
         Random rand = new Random();
@@ -243,6 +273,10 @@ public class MainActivity extends ActionBarActivity {
         coltext.setText(Integer.toString(col));
     }
 
+    /**
+     * scrambleCopyPassword -- Copy the password field
+     * @param v
+     */
     public void scrambleCopyPassword(View v) {
         EditText scramblepassword = (EditText) findViewById(R.id.scramble_password);
         String cliptext = scramblepassword.getText().toString();
@@ -251,8 +285,10 @@ public class MainActivity extends ActionBarActivity {
         Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show();
     }
 
-    boolean showpasswordstatus = true;
-
+    /**
+     * scrambleShowPassword -- Toggle the password field to show the password
+     * @param v
+     */
     public void scrambleShowPassword(View v) {
         //Toast.makeText(this, "Show Password", Toast.LENGTH_SHORT).show();
         EditText scramblepassword = (EditText) findViewById(R.id.scramble_password);
@@ -269,6 +305,10 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * openCamera -- Open camera and send the intent
+     * @param v
+     */
     public void openCamera(View v) {
         PackageManager packageManager = this.getPackageManager();
         if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
@@ -294,13 +334,18 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    String mCurrentPhotoPath;
-
+    /**
+     * createImageFile -- Save the image from the intent from camera
+     * @return File -- Return the image file
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
         //Create an image file name
         String timeStamp = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        String sdCard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/imgScramble/Source/";
+        String sdCard;
+        sdCard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                + "/imgScramble/Source/";
         File storageDir = new File(sdCard);
         if (!storageDir.exists()) {
             storageDir.mkdirs();
@@ -314,12 +359,22 @@ public class MainActivity extends ActionBarActivity {
         return image;
     }
 
+    /**
+     * scrambleScrambleOnClick -- Turn option to scramble; disable EditText on the Width and Height
+     * @param v
+     */
     public void scrambleScrambleOnClick (View v){
         EditText widthedittext = (EditText) findViewById(R.id.scramble_image_width);
         EditText heightedittext = (EditText) findViewById(R.id.scramble_image_height);
         widthedittext.setEnabled(false);
         heightedittext.setEnabled(false);
     }
+
+    /**
+     * scrambleDescrambleOnClick -- Turn option to descramble; enable EditText on the
+     * Width and Height
+     * @param v
+     */
     public void scrambleDescrambleOnClick (View v){
         EditText widthedittext = (EditText) findViewById(R.id.scramble_image_width);
         EditText heightedittext = (EditText) findViewById(R.id.scramble_image_height);

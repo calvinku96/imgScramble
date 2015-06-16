@@ -11,13 +11,16 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
-/**
- * Created by calvin on 6/5/15.
- */
 public class Algorithms {
     final protected static char[] hexArray = "0123456789abcdef".toCharArray();
-
     //Methods hashes
+
+    /**
+     * getHashMultiple -- calls the getHash function mul times
+     * @param mul - times to hash
+     * @param pass - password
+     * @return
+     */
     public static byte[] getHashMultiple(int mul, byte[] pass) {
         for (int i = 0; i < mul; i++) {
             pass = getHash(pass);
@@ -25,6 +28,11 @@ public class Algorithms {
         return pass;
     }
 
+    /**
+     * getHash -- do SHA-256 hash
+     * @param pass - password
+     * @return
+     */
     public static byte[] getHash(byte[] pass) {
         //Do as SHA-256 hash once
         try {
@@ -36,6 +44,11 @@ public class Algorithms {
         }
     }
 
+    /**
+     * byteToHex -- turn byte[] to Hex String
+     * @param bytes
+     * @return String - Hex String
+     */
     public static String bytesToHex(byte[] bytes) {
         //Convert byte[] array from getHash to hex String
         char[] hexChars = new char[bytes.length * 2];
@@ -47,9 +60,13 @@ public class Algorithms {
         return new String(hexChars);
     }
 
-    // Methods for Lehmer
+    /**
+     * encode -- Turn the lehmer code d into the falling factorial sequence of numbers
+     * @param n - length of sequence
+     * @param d - Lehmer Code
+     * @return int[] - falling factorial sequence
+     */
     public static int[] encode(int n, BigInteger d) {
-        //Turn the lehmer code d into the falling factorial sequence of number
         Factorial fact = new Factorial(n);
         int[] ans = new int[n];
         for (int i = n - 1; i >= 0; i--) {
@@ -61,8 +78,13 @@ public class Algorithms {
         return ans;
     }
 
+    /**
+     * ffs2seq -- Convert the falling factorial sequence to the combination sequence
+     * @param n - length of sequence
+     * @param input - falling factorial sequence
+     * @return int[] falling factorial sequence
+     */
     public static int[] ffs2seq(int n, int[] input) {
-        //Convert the falling factorial sequence to the combination sequence
         for (int i = n - 2; i >= 0; i--) {
             for (int j = i + 1; j < n; j++) {
                 if (input[j] >= input[i]) {
@@ -74,7 +96,11 @@ public class Algorithms {
     }
 
 
-    // Methods for RearrangeImage AsyncTask
+
+    /**
+     * Methods for RearrangeImage AsyncTask
+     */
+
     public static Bitmap rearrangeImageMethod(ArrayList<Bitmap> imagearray, int[] permarray, boolean scrambleboolean, int row, int col) {
         Bitmap[] rearrangedimagearray = new Bitmap[imagearray.size()];
         if (scrambleboolean) {
@@ -110,7 +136,9 @@ public class Algorithms {
         return temp;
     }
 
-    //Methods for HashNum AsyncTask
+    /**
+     * Methods for HashNum AsyncTask
+     */
     public static int[] hashNumMethod(String[] params) {
         String password = params[0];
         int row = Integer.parseInt(params[1]);
@@ -151,7 +179,9 @@ public class Algorithms {
         return perm;
     }
 
-    // Methods for SplitImage
+    /**
+     * Methods for SplitImage
+     */
     public static ArrayList<Bitmap> splitImageMethod (String[] params, InputStream imageInputStream){
         Uri imageuri = Uri.parse(params[0]);
             int row = Integer.parseInt(params[1]);

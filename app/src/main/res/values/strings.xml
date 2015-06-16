@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    //App name
     <string name="app_name">imgScramble</string>
+
 
     <string name="tab_scramble">Scramble/Descramble</string>
     <string name="tab_about">Help/About</string>
-
     <string name="action_help">Help/About</string>
 
 
@@ -26,9 +27,7 @@
     <string name="scramble_options">Options: </string>
     <string-array name="scramble_options_array">
         <item>Set everything automatically, just pick the password</item>
-        <item>Generate number of rows and columns automatically from password, image may be cropped due to dimension constraint</item>
-        <item>Pick number of rows and columns, but may be adjusted up due to image dimension constraint</item>
-        <item>Pick number of rows and columns, crop image to adjust to selected number of rows and columns</item>
+        <item>Generate number of rows and columns automatically from password, image may be extended due to dimension constraint</item>
         <item>Pick number of rows and columns, extend image to adjust to selected number of rows and columns</item>
     </string-array>
     <string name="scramble_option_0">Very Coarse</string>
@@ -41,23 +40,17 @@
     <string name="title_activity_scrambling">imgScramble</string>
     <string name="scrambling_loading">Loading</string>
     <string name="scrambling_quality">Quality of Image: </string>
-
     <string name="scrambling_rearrange_image">Rearranging image</string>
     <string name="scrambling_get_permutation">Getting permutation from password</string>
     <string name="scrambling_split_image">Splitting image</string>
     <string name="scrambling_split_image_finish">Finished splitting image</string>
-
     <string name="scrambling_scramblingSaveImage_saved">Image saved</string>
     <string name="scrambling_scramblingSaveImage_not_done">Image not done</string>
     <string name="scrambling_image_widthheight">WidthHeight</string>
-
     <string name="scrambling_send_to">Send To</string>
-
     <string name="scrambling_scramblingSaveText_saved">Image Saved as Text in /Documents/imgScramble</string>
-    <string name="scrambling_widthheight_text">You will need to input your password, row and column number.
- If you want to send through apps that compress images, also input\n</string>
+    <string name="scrambling_widthheight_text">You will need to input your password, row and column number. If you want to send through apps that compress images, also input\n</string>
     <string name="scrambling_widthheight_text2">as width and</string>
     <string name="scrambling_widthheight_text3">as height.</string>
-
     <string name="scrambling_copied">Copied parameters (except password) in terms of: #rows #cols Width Height</string>
 </resources>

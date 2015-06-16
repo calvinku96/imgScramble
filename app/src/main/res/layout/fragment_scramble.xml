@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
     <RelativeLayout
         android:id="@+id/scrambleImageViewLayout"
         android:layout_width="match_parent"
@@ -15,8 +13,6 @@
         android:layout_weight="5"
         android:background="#000000"
         android:gravity="center">
-
-
         <ImageView
             android:id="@+id/scrambleImageView"
             android:layout_width="match_parent"
@@ -27,7 +23,6 @@
             android:layout_centerHorizontal="true"
             android:scaleType="centerInside"
             android:src="@drawable/add_image" />
-
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,34 +32,27 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_camera_alt_white_48dp" />
-
     </RelativeLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4">
-
         <ScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3">
-
                         <EditText
                             android:id="@+id/scramble_password"
                             android:layout_width="match_parent"
@@ -72,7 +60,6 @@
                             android:ems="10"
                             android:hint="@string/scramble_password"
                             android:inputType="textPassword" />
-
                         <ImageView
                             android:id="@+id/scramble_show_password"
                             android:layout_width="wrap_content"
@@ -84,7 +71,6 @@
                             android:clickable="true"
                             android:onClick="scrambleShowPassword"
                             android:src="@drawable/ic_visibility_off_black_24dp" />
-
                         <ImageView
                             android:id="@+id/scramble_copy_password"
                             android:layout_width="wrap_content"
@@ -94,9 +80,7 @@
                             android:clickable="true"
                             android:onClick="scrambleCopyPassword"
                             android:src="@drawable/ic_content_copy_black_24dp" />
-
                     </RelativeLayout>
-
                     <EditText
                         android:id="@+id/scramble_row"
                         android:layout_width="0dp"
@@ -105,7 +89,6 @@
                         android:ems="10"
                         android:hint="@string/scramble_rows"
                         android:inputType="number" />
-
                     <EditText
                         android:id="@+id/scramble_cols"
                         android:layout_width="0dp"
@@ -114,9 +97,7 @@
                         android:ems="10"
                         android:hint="@string/scramble_columns"
                         android:inputType="number" />
-
                 </LinearLayout>
-
                 <LinearLayout
                     android:id="@+id/radio_group_layout"
                     android:layout_width="match_parent"
@@ -128,7 +109,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
-
                     <RadioButton
                         android:id="@+id/scramble_radio_scramble"
                         android:layout_width="wrap_content"
@@ -136,7 +116,6 @@
                         android:checked="true"
                         android:onClick="scrambleScrambleOnClick"
                         android:text="@string/scramble_radio_scramble" />
-
                     <RadioButton
                         android:id="@+id/scramble_radio_descramble"
                         android:layout_width="wrap_content"
@@ -145,7 +124,6 @@
                         android:onClick="scrambleDescrambleOnClick"
                         android:text="@string/scramble_radio_descramble" />
                     </RadioGroup>
-
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -159,7 +137,6 @@
                         android:id="@+id/scramble_image_width"
                         android:layout_weight="1"
                         android:hint="@string/scramble_image_width_hint" />
-
                     <EditText
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -169,22 +146,18 @@
                         android:layout_weight="1"
                         android:hint="@string/scramble_image_height_hint" />
                     </LinearLayout>
-
                 </LinearLayout>
-
                 <LinearLayout
                     android:id="@+id/scramble_image_quality_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-
                     <TextView
                         android:id="@+id/scramble_image_quality_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:text="@string/scramble_option_pre" />
-
                     <SeekBar
                         android:id="@+id/scramble_image_quality_seekBar"
                         android:layout_width="match_parent"
@@ -194,30 +167,25 @@
                         android:paddingRight="20dp"
                         android:indeterminate="false" />
                 </LinearLayout>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/scramble_options" />
-
                     <Spinner
                         android:id="@+id/scramble_option_spinner"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:spinnerMode="dialog" />
                 </LinearLayout>
-
                 <LinearLayout
                     android:id="@+id/scramblebutton_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:weightSum="2">
-
                     <Button
                         android:id="@+id/scramble_scramble"
                         android:layout_width="wrap_content"
@@ -226,7 +194,6 @@
                         android:layout_weight="1"
                         android:onClick="scrambleStart"
                         android:text="@string/scramble_button" />
-
                     <Button
                         android:id="@+id/scramble_random"
                         android:layout_width="wrap_content"
@@ -234,15 +201,8 @@
                         android:layout_weight="1"
                         android:onClick="scrambleRandom"
                         android:text="@string/scramble_random" />
-
-
                 </LinearLayout>
-
-
             </LinearLayout>
         </ScrollView>
-
     </LinearLayout>
-
-
 </LinearLayout>

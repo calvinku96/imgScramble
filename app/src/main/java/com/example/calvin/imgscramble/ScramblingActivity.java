@@ -56,6 +56,7 @@ public class ScramblingActivity extends ActionBarActivity {
         seekBar = (SeekBar) findViewById(R.id.scrambling_quality_seekBar);
         seekBar.setProgress(9);
         seekBartext.setText(getString(R.string.scrambling_quality) + getSeekBarProgress(seekBar));
+        //seekBar Listener
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress = 0;
 
@@ -63,7 +64,8 @@ public class ScramblingActivity extends ActionBarActivity {
             public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
                 progress = progressValue;
                 TextView seekBartext = (TextView) findViewById(R.id.scrambling_quality_text);
-                seekBartext.setText(getString(R.string.scrambling_quality) + getSeekBarProgress(seekBar));
+                seekBartext.setText(getString(R.string.scrambling_quality)
+                        + getSeekBarProgress(seekBar));
             }
 
             @Override
@@ -75,7 +77,7 @@ public class ScramblingActivity extends ActionBarActivity {
             }
         });
 
-        // Intent
+        //Receive the intent
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         String imageuristring = extras.getString("EXTRA_IMAGE");
@@ -92,25 +94,39 @@ public class ScramblingActivity extends ActionBarActivity {
         imageuri = Uri.parse(imageuristring);
         LinearLayout layout = (LinearLayout) findViewById(R.id.scrambling_picture_parent_layout);
         layout.setVisibility(View.GONE);
-        new SplitImage().execute(imageuristring, rowstring, colstring, scramblestring, imagewidthstring, imageheightstring);
+        new SplitImage().execute(imageuristring, rowstring, colstring,
+                scramblestring, imagewidthstring, imageheightstring);
         new HashNum().execute(scramblepassword, rowstring, colstring);
 
         //clipboard
         clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
     }
 
+    /**
+     * getSeekBarProgress -- Get the progress of the seekBar in terms of the quality
+     * @param seekBar - the SeekBar Object
+     * @return - integer 5 - 100 for the quality of the image
+     */
     public int getSeekBarProgress(SeekBar seekBar) {
         return (seekBar.getProgress() + 1) * 5;
     }
 
+    /**
+     * finishHashSplit -- Called when permutation was generated and image split
+     * Rearrange image and put it back together
+     */
     public void finishHashSplit() {
         if (imagearraypresent && permarraypresent) {
-            RearrangeImage re = new RearrangeImage(imagearray, permarray, scrambleboolean, Integer.parseInt(rowstring), Integer.parseInt(colstring));
+            RearrangeImage re = new RearrangeImage(imagearray, permarray, scrambleboolean,
+                    Integer.parseInt(rowstring), Integer.parseInt(colstring));
             editProgressText(R.string.scrambling_rearrange_image);
             re.execute("");
         }
     }
 
+    /**
+     * RearrangeImage -- Rearrange image
+     */
     private class RearrangeImage extends AsyncTask<String, Void, Bitmap> {
         ArrayList<Bitmap> imagearray;
         int[] permarray;
@@ -118,7 +134,8 @@ public class ScramblingActivity extends ActionBarActivity {
         int row;
         int col;
 
-        public RearrangeImage(ArrayList<Bitmap> imagearray, int[] permarray, boolean scrambleboolean, int row, int col) {
+        public RearrangeImage(ArrayList<Bitmap> imagearray, int[] permarray,
+                              boolean scrambleboolean, int row, int col) {
             this.imagearray = imagearray;
             this.permarray = permarray;
             this.scrambleboolean = scrambleboolean;
@@ -128,31 +145,47 @@ public class ScramblingActivity extends ActionBarActivity {
 
         @Override
         protected Bitmap doInBackground(String... params) {
-            return Algorithms.rearrangeImageMethod(imagearray, permarray, scrambleboolean, row, col);
+            return Algorithms.rearrangeImageMethod(imagearray, permarray,
+                    scrambleboolean, row, col);
         }
 
         @Override
         protected void onPostExecute(Bitmap bitmapoutput) {
             ImageView image = (ImageView) findViewById(R.id.scrambling_output_image);
-            LinearLayout layout = (LinearLayout) findViewById(R.id.scrambling_picture_parent_layout);
+            LinearLayout layout;
+            layout = (LinearLayout) findViewById(R.id.scrambling_picture_parent_layout);
             layout.setVisibility(View.VISIBLE);
             image.setImageBitmap(bitmapoutput);
             outputimage = bitmapoutput;
             scramblingdone = true;
-            RelativeLayout progresslayout = (RelativeLayout) findViewById(R.id.scrambling_loading_layout);
+            RelativeLayout progresslayout;
+            progresslayout = (RelativeLayout) findViewById(R.id.scrambling_loading_layout);
             progresslayout.setVisibility(View.GONE);
             TextView widthheight = (TextView)findViewById(R.id.scrambling_width_height);
-            widthheight.setText(getString(R.string.scrambling_widthheight_text)+outputimage.getWidth()+" "+getString(R.string.scrambling_widthheight_text2)+" "+outputimage.getHeight()+" "+getString(R.string.scrambling_widthheight_text3));
-            copystring = rowstring + " " + colstring + " " + Integer.toString(outputimage.getWidth()) + " " + Integer.toString(outputimage.getHeight());
+            widthheight.setText(getString(R.string.scrambling_widthheight_text)
+                    + outputimage.getWidth() + " "
+                    + getString(R.string.scrambling_widthheight_text2) + " "
+                    + outputimage.getHeight() + " "
+                    + getString(R.string.scrambling_widthheight_text3));
+            copystring = rowstring + " "
+                    + colstring + " "
+                    + Integer.toString(outputimage.getWidth()) + " "
+                    + Integer.toString(outputimage.getHeight());
         }
     }
 
-
+    /**
+     * editProgressText -- Handles the loading screen textView
+     * @param text
+     */
     public void editProgressText(int text) {
         TextView loadingtext = (TextView) findViewById(R.id.scrambling_loading);
         loadingtext.setText(getString(text));
     }
 
+    /**
+     * HashNum -- AsyncTask for Hashing
+     */
     private class HashNum extends AsyncTask<String, Void, int[]> {
         @Override
         protected void onPreExecute() {
@@ -172,6 +205,9 @@ public class ScramblingActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * SplitImage -- AsyncTask to split image
+     */
     private class SplitImage extends AsyncTask<String, Void, ArrayList<Bitmap>> {
         @Override
         protected void onPreExecute() {
@@ -218,6 +254,11 @@ public class ScramblingActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * getFileName -- get the initial file name of the picture
+     * @param uri
+     * @return
+     */
     public String getFileName(Uri uri) {
         String result = null;
         if (uri.getScheme().equals("content")) {
@@ -240,6 +281,10 @@ public class ScramblingActivity extends ActionBarActivity {
         return result;
     }
 
+    /**
+     * convertImageToJPEG -- Convert image to JPEG
+     * @return
+     */
     public byte[] convertImageToJPEG() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         outputimage.compress(Bitmap.CompressFormat.JPEG, getSeekBarProgress(seekBar), bytes);
@@ -247,6 +292,10 @@ public class ScramblingActivity extends ActionBarActivity {
         return imagebytearray;
     }
 
+    /**
+     * scramblingShare -- Share image
+     * @param v
+     */
     public void scramblingShare(View v) {
         byte[] imagebytearray = convertImageToJPEG();
         Intent shareIntent = new Intent();
@@ -256,33 +305,10 @@ public class ScramblingActivity extends ActionBarActivity {
         startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.scrambling_send_to)));
     }
 
-    /*
-    public void scramblingSaveText(View v) {
-        byte[] imagebytearray = convertImageToJPEG();
-        String base64 = Base64.encodeToString(imagebytearray, Base64.DEFAULT);
-        Time today = new Time(Time.getCurrentTimezone());
-        today.setToNow();
-        String datestring = today.format("%Y-%m%-d-%H:%M:%S");
-        String filename = getFileName(imageuri);
-        filename = "imgScramble_text_" + datestring + "_q" + getSeekBarProgress(seekBar)+ "_" + filename.substring(0, filename.length() - 4)  + ".txt";
-        String sdCard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/imgScramble/";
-        File newdir = new File(sdCard);
-        if (!newdir.exists()) {
-            newdir.mkdirs();
-        }
-        File f = new File(sdCard, filename);
-        try {
-            f.createNewFile();
-            FileOutputStream fo = new FileOutputStream(f);
-            fo.write(base64.getBytes());
-            fo.close();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-        Toast.makeText(this, getString(R.string.scrambling_scramblingSaveText_saved), Toast.LENGTH_SHORT).show();
-    }
-    */
-
+    /**
+     * scramblingSaveImage -- Save the current image
+     * @param v
+     */
     public void scramblingSaveImage(View v) {
         if (scramblingdone) {
             //Filename
@@ -290,10 +316,14 @@ public class ScramblingActivity extends ActionBarActivity {
             today.setToNow();
             String datestring = today.format("%Y-%m-%d-%H:%M:%S");
             String filename = getFileName(imageuri);
-            filename = "imgScramble_text_" + datestring + "_q" + getSeekBarProgress(seekBar)+ "_" + filename.substring(0, filename.length() - 4) + ".jpg";
+            filename = "imgScramble_text_" + datestring+ "_q"
+                    + getSeekBarProgress(seekBar)+ "_"
+                    + filename.substring(0, filename.length() - 4) + ".jpg";
             byte[] imagebytearray = convertImageToJPEG();
             //save image
-            String sdCard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/imgScramble/";
+            String sdCard;
+            sdCard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                    + "/imgScramble/";
             File newdir = new File(sdCard);
             if (!newdir.exists()) {
                 newdir.mkdirs();
@@ -316,10 +346,16 @@ public class ScramblingActivity extends ActionBarActivity {
             Toast.makeText(this, getString(R.string.scrambling_scramblingSaveImage_not_done), Toast.LENGTH_SHORT).show();
         }
     }
+
+    /**
+     * scramblingCopyImage -- Copy image details
+     * @param v
+     */
     public void scramblingCopyImage(View v){
         clipdata = ClipData.newPlainText("text", copystring);
         clipboard.setPrimaryClip(clipdata);
-        Toast.makeText(this, getString(R.string.scrambling_copied), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.scrambling_copied),
+                Toast.LENGTH_SHORT).show();
     }
 
 }
