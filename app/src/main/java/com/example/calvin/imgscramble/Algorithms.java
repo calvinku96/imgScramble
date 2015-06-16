@@ -191,17 +191,21 @@ public class Algorithms {
             //Convert Uri to Bitmap
         if (!(params[4].equals("") && params[5].equals(""))&& params[3].equals("d")) {
             try {
-                BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(imageInputStream, false);
+                BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(imageInputStream,
+                        false);
                 int chunkWidth = Integer.parseInt(params[4]) / col;
                 int chunkHeight = Integer.parseInt(params[5]) / row;
-                Bitmap wholeimage = decoder.decodeRegion(new Rect(0, 0, decoder.getWidth(), decoder.getHeight()), null);
-                Bitmap scaledimage = Bitmap.createScaledBitmap(wholeimage, Integer.parseInt(params[4]), Integer.parseInt(params[5]), false);
+                Bitmap wholeimage = decoder.decodeRegion(new Rect(0, 0, decoder.getWidth(),
+                        decoder.getHeight()), null);
+                Bitmap scaledimage = Bitmap.createScaledBitmap(wholeimage,
+                        Integer.parseInt(params[4]), Integer.parseInt(params[5]), false);
 
                 int yCoord = 0;
                 for (int y = 0; y < row; y++) {
                     int xCoord = 0;
                     for (int x = 0; x < col; x++) {
-                        Bitmap tempimage = Bitmap.createBitmap(scaledimage, xCoord , yCoord, chunkWidth, chunkHeight);
+                        Bitmap tempimage = Bitmap.createBitmap(scaledimage, xCoord , yCoord,
+                                chunkWidth, chunkHeight);
                         chunkedimages.add(tempimage);
                         xCoord += chunkWidth;
                     }
@@ -212,7 +216,8 @@ public class Algorithms {
             }
         } else {
             try {
-                BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(imageInputStream, false);
+                BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(imageInputStream,
+                        false);
                 int chunkHeight = decoder.getHeight() / row;
                 int chunkWidth = decoder.getWidth() / col;
 
@@ -220,7 +225,8 @@ public class Algorithms {
                 for (int y = 0; y < row; y++) {
                     int xCoord = 0;
                     for (int x = 0; x < col; x++) {
-                        Bitmap tempimage = decoder.decodeRegion(new Rect(xCoord, yCoord, xCoord + chunkWidth, yCoord + chunkHeight), null);
+                        Bitmap tempimage = decoder.decodeRegion(new Rect(xCoord, yCoord,
+                                xCoord + chunkWidth, yCoord + chunkHeight), null);
                         chunkedimages.add(tempimage);
                         xCoord += chunkWidth;
                     }
