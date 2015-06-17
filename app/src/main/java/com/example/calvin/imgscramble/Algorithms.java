@@ -98,7 +98,7 @@ public class Algorithms {
 
 
     /**
-     * Methods for RearrangeImage AsyncTask
+     * Methods for RearrangeImage Runnable
      */
 
     public static Bitmap rearrangeImageMethod(ArrayList<Bitmap> imagearray, int[] permarray, boolean scrambleboolean, int row, int col) {
@@ -137,7 +137,7 @@ public class Algorithms {
     }
 
     /**
-     * Methods for HashNum AsyncTask
+     * Methods for HashNum Runnable
      */
     public static int[] hashNumMethod(String[] params) {
         String password = params[0];

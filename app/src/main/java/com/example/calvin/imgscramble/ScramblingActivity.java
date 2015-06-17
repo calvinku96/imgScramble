@@ -1,5 +1,6 @@
 package com.example.calvin.imgscramble;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -94,9 +95,13 @@ public class ScramblingActivity extends ActionBarActivity {
         imageuri = Uri.parse(imageuristring);
         LinearLayout layout = (LinearLayout) findViewById(R.id.scrambling_picture_parent_layout);
         layout.setVisibility(View.GONE);
-        new SplitImage().execute(imageuristring, rowstring, colstring,
-                scramblestring, imagewidthstring, imageheightstring);
-        new HashNum().execute(scramblepassword, rowstring, colstring);
+        String[] splitimageinput = new String[]{imageuristring, rowstring, colstring,
+                scramblestring, imagewidthstring, imageheightstring};
+        SplitImage splitImage = new SplitImage(splitimageinput);
+        String[] hashnuminput = new String[]{scramblepassword, rowstring, colstring};
+        HashNum hashNum = new HashNum(hashnuminput);
+        new Thread(splitImage).start();
+        new Thread(hashNum).start();
 
         //clipboard
         clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
@@ -104,6 +109,7 @@ public class ScramblingActivity extends ActionBarActivity {
 
     /**
      * getSeekBarProgress -- Get the progress of the seekBar in terms of the quality
+     *
      * @param seekBar - the SeekBar Object
      * @return - integer 5 - 100 for the quality of the image
      */
@@ -120,37 +126,49 @@ public class ScramblingActivity extends ActionBarActivity {
             RearrangeImage re = new RearrangeImage(imagearray, permarray, scrambleboolean,
                     Integer.parseInt(rowstring), Integer.parseInt(colstring));
             editProgressText(R.string.scrambling_rearrange_image);
-            re.execute("");
+            new Thread(re).start();
         }
     }
 
     /**
-     * RearrangeImage -- Rearrange image
+     * RearrangeImage -- Runnable to Rearrange image
      */
-    private class RearrangeImage extends AsyncTask<String, Void, Bitmap> {
+    private class RearrangeImage implements Runnable {
         ArrayList<Bitmap> imagearray;
         int[] permarray;
-        boolean scrambleboolean;
+        boolean scramblebool;
         int row;
         int col;
 
         public RearrangeImage(ArrayList<Bitmap> imagearray, int[] permarray,
-                              boolean scrambleboolean, int row, int col) {
+                              boolean scrambleboolen, int row, int col) {
+            //init
             this.imagearray = imagearray;
             this.permarray = permarray;
-            this.scrambleboolean = scrambleboolean;
+            this.scramblebool = scrambleboolean;
             this.row = row;
             this.col = col;
         }
 
         @Override
-        protected Bitmap doInBackground(String... params) {
-            return Algorithms.rearrangeImageMethod(imagearray, permarray,
-                    scrambleboolean, row, col);
+        public void run() {
+            //Run
+            Bitmap result = Algorithms.rearrangeImageMethod(imagearray, permarray,
+                    scramblebool, row, col);
+            PostRearrangeImage postRearrangeImage = new PostRearrangeImage(result);
+            runOnUiThread(postRearrangeImage);
+        }
+    }
+
+    private class PostRearrangeImage implements Runnable {
+        Bitmap bitmapoutput;
+
+        public PostRearrangeImage(Bitmap bitmapoutput) {
+            this.bitmapoutput = bitmapoutput;
         }
 
         @Override
-        protected void onPostExecute(Bitmap bitmapoutput) {
+        public void run() {
             ImageView image = (ImageView) findViewById(R.id.scrambling_output_image);
             LinearLayout layout;
             layout = (LinearLayout) findViewById(R.id.scrambling_picture_parent_layout);
@@ -161,7 +179,7 @@ public class ScramblingActivity extends ActionBarActivity {
             RelativeLayout progresslayout;
             progresslayout = (RelativeLayout) findViewById(R.id.scrambling_loading_layout);
             progresslayout.setVisibility(View.GONE);
-            TextView widthheight = (TextView)findViewById(R.id.scrambling_width_height);
+            TextView widthheight = (TextView) findViewById(R.id.scrambling_width_height);
             widthheight.setText(getString(R.string.scrambling_widthheight_text)
                     + outputimage.getWidth() + " "
                     + getString(R.string.scrambling_widthheight_text2) + " "
@@ -176,6 +194,7 @@ public class ScramblingActivity extends ActionBarActivity {
 
     /**
      * editProgressText -- Handles the loading screen textView
+     *
      * @param text
      */
     public void editProgressText(int text) {
@@ -184,21 +203,32 @@ public class ScramblingActivity extends ActionBarActivity {
     }
 
     /**
-     * HashNum -- AsyncTask for Hashing
+     * HashNum -- Runnable syncTask for Hashing
      */
-    private class HashNum extends AsyncTask<String, Void, int[]> {
-        @Override
-        protected void onPreExecute() {
-            editProgressText(R.string.scrambling_get_permutation);
+    private class HashNum implements Runnable {
+        String[] params;
+
+        public HashNum(String[] params) {
+            this.params = params;
         }
 
         @Override
-        protected int[] doInBackground(String... params) {
-            return Algorithms.hashNumMethod(params);
+        public void run() {
+            int[] result = Algorithms.hashNumMethod(params);
+            PostHashNum postHashNum = new PostHashNum(result);
+            runOnUiThread(postHashNum);
+        }
+    }
+
+    private class PostHashNum implements Runnable {
+        int[] outputs;
+
+        public PostHashNum(int[] outputs) {
+            this.outputs = outputs;
         }
 
         @Override
-        protected void onPostExecute(int[] outputs) {
+        public void run() {
             permarray = outputs;
             permarraypresent = true;
             finishHashSplit();
@@ -206,32 +236,44 @@ public class ScramblingActivity extends ActionBarActivity {
     }
 
     /**
-     * SplitImage -- AsyncTask to split image
+     * SplitImage -- Runnable to split image
      */
-    private class SplitImage extends AsyncTask<String, Void, ArrayList<Bitmap>> {
-        @Override
-        protected void onPreExecute() {
-            editProgressText(R.string.scrambling_split_image);
+    private class SplitImage implements Runnable {
+        String[] params;
+
+        public SplitImage(String[] params) {
+            this.params = params;
         }
 
         @Override
-        protected ArrayList<Bitmap> doInBackground(String... params) {
+        public void run() {
             imageuri = Uri.parse(params[0]);
             try {
                 InputStream imageInputStream = getContentResolver().openInputStream(imageuri);
-                return Algorithms.splitImageMethod(params, imageInputStream);
+                ArrayList<Bitmap> result = Algorithms.splitImageMethod(params, imageInputStream);
+                PostSplitImage postSplitImage = new PostSplitImage(result);
+                runOnUiThread(postSplitImage);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
         }
+    }
+
+    private class PostSplitImage implements Runnable {
+        ArrayList<Bitmap> output;
+
+        public PostSplitImage(ArrayList<Bitmap> output) {
+            this.output = output;
+        }
 
         @Override
-        protected void onPostExecute(ArrayList<Bitmap> output) {
+        public void run() {
             //Pass the chunkedimages to the scramble image AsyncTask
             imagearray = output;
             imagearraypresent = true;
             editProgressText(R.string.scrambling_split_image_finish);
             finishHashSplit();
+
         }
     }
 
@@ -256,6 +298,7 @@ public class ScramblingActivity extends ActionBarActivity {
 
     /**
      * getFileName -- get the initial file name of the picture
+     *
      * @param uri
      * @return
      */
@@ -283,6 +326,7 @@ public class ScramblingActivity extends ActionBarActivity {
 
     /**
      * convertImageToJPEG -- Convert image to JPEG
+     *
      * @return
      */
     public byte[] convertImageToJPEG() {
@@ -294,6 +338,7 @@ public class ScramblingActivity extends ActionBarActivity {
 
     /**
      * scramblingShare -- Share image
+     *
      * @param v
      */
     public void scramblingShare(View v) {
@@ -307,6 +352,7 @@ public class ScramblingActivity extends ActionBarActivity {
 
     /**
      * scramblingSaveImage -- Save the current image
+     *
      * @param v
      */
     public void scramblingSaveImage(View v) {
@@ -316,8 +362,8 @@ public class ScramblingActivity extends ActionBarActivity {
             today.setToNow();
             String datestring = today.format("%Y-%m-%d-%H:%M:%S");
             String filename = getFileName(imageuri);
-            filename = "imgScramble_text_" + datestring+ "_q"
-                    + getSeekBarProgress(seekBar)+ "_"
+            filename = "imgScramble_text_" + datestring + "_q"
+                    + getSeekBarProgress(seekBar) + "_"
                     + filename.substring(0, filename.length() - 4) + ".jpg";
             byte[] imagebytearray = convertImageToJPEG();
             //save image
@@ -349,9 +395,10 @@ public class ScramblingActivity extends ActionBarActivity {
 
     /**
      * scramblingCopyImage -- Copy image details
+     *
      * @param v
      */
-    public void scramblingCopyImage(View v){
+    public void scramblingCopyImage(View v) {
         clipdata = ClipData.newPlainText("text", copystring);
         clipboard.setPrimaryClip(clipdata);
         Toast.makeText(this, getString(R.string.scrambling_copied),
