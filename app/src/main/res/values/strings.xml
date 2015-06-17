@@ -45,6 +45,7 @@
     <string name="scrambling_split_image">Splitting image</string>
     <string name="scrambling_split_image_finish">Finished splitting image</string>
     <string name="scrambling_scramblingSaveImage_saved">Image saved</string>
+    <string name="scrambling_scramblingSaveImage_saving">Saving ...</string>
     <string name="scrambling_scramblingSaveImage_not_done">Image not done</string>
     <string name="scrambling_image_widthheight">WidthHeight</string>
     <string name="scrambling_send_to">Send To</string>

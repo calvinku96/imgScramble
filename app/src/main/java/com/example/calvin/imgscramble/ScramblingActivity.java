@@ -1,6 +1,5 @@
 package com.example.calvin.imgscramble;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -329,9 +328,9 @@ public class ScramblingActivity extends ActionBarActivity {
      *
      * @return
      */
-    public byte[] convertImageToJPEG() {
+    public byte[] convertImageToJPEG(Bitmap image, int seekbarprogress) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        outputimage.compress(Bitmap.CompressFormat.JPEG, getSeekBarProgress(seekBar), bytes);
+        image.compress(Bitmap.CompressFormat.JPEG, seekbarprogress, bytes);
         byte[] imagebytearray = bytes.toByteArray();
         return imagebytearray;
     }
@@ -342,12 +341,11 @@ public class ScramblingActivity extends ActionBarActivity {
      * @param v
      */
     public void scramblingShare(View v) {
-        byte[] imagebytearray = convertImageToJPEG();
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_STREAM, imagebytearray);
-        shareIntent.setType("image/jpeg");
-        startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.scrambling_send_to)));
+        String filename = getFileName(imageuri);
+        int seekbarprogress = getSeekBarProgress(seekBar);
+        ScramblingSaveImageAsyncTask sa = new ScramblingSaveImageAsyncTask(filename,
+                outputimage, seekbarprogress, true);
+        sa.execute("");
     }
 
     /**
@@ -357,15 +355,45 @@ public class ScramblingActivity extends ActionBarActivity {
      */
     public void scramblingSaveImage(View v) {
         if (scramblingdone) {
+            Toast.makeText(this, getString(R.string.scrambling_scramblingSaveImage_saving),
+                    Toast.LENGTH_SHORT).show();
+            String filename = getFileName(imageuri);
+            int seekbarprogress = getSeekBarProgress(seekBar);
+            ScramblingSaveImageAsyncTask sc = new ScramblingSaveImageAsyncTask(filename,
+                    outputimage, seekbarprogress, false);
+            sc.execute("");
+        } else {
+            Toast.makeText(this, getString(R.string.scrambling_scramblingSaveImage_not_done), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * ScramblingSaveImageAsyncTask -- AsyncTask for saving image
+     */
+    private class ScramblingSaveImageAsyncTask extends AsyncTask<String, Void, File> {
+        String filename;
+        Bitmap imageoutput;
+        int seekbarprogress;
+        boolean share;
+
+        public ScramblingSaveImageAsyncTask(String filename, Bitmap imageoutput,
+                                            int seekbarprogress, boolean share) {
+            this.filename = filename;
+            this.imageoutput = imageoutput;
+            this.seekbarprogress = seekbarprogress;
+            this.share = share;
+        }
+
+        @Override
+        protected File doInBackground(String... params) {
             //Filename
             Time today = new Time(Time.getCurrentTimezone());
             today.setToNow();
             String datestring = today.format("%Y-%m-%d-%H:%M:%S");
-            String filename = getFileName(imageuri);
             filename = "imgScramble_text_" + datestring + "_q"
                     + getSeekBarProgress(seekBar) + "_"
                     + filename.substring(0, filename.length() - 4) + ".jpg";
-            byte[] imagebytearray = convertImageToJPEG();
+            byte[] imagebytearray = convertImageToJPEG(imageoutput, seekbarprogress);
             //save image
             String sdCard;
             sdCard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
@@ -383,13 +411,28 @@ public class ScramblingActivity extends ActionBarActivity {
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
+            return f;
+        }
+
+        @Override
+        protected void onPostExecute(File f) {
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             Uri contentUri = Uri.fromFile(f);
-            mediaScanIntent.setData(contentUri);
-            this.sendBroadcast(mediaScanIntent);
-            Toast.makeText(this, getString(R.string.scrambling_scramblingSaveImage_saved), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, getString(R.string.scrambling_scramblingSaveImage_not_done), Toast.LENGTH_SHORT).show();
+            if (share) {
+                //share
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                shareIntent.setType("image/jpeg");
+                startActivity(Intent.createChooser(shareIntent,
+                        getResources().getText(R.string.scrambling_send_to)));
+            } else {
+                mediaScanIntent.setData(contentUri);
+                getApplicationContext().sendBroadcast(mediaScanIntent);
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.scrambling_scramblingSaveImage_saved),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
