@@ -239,6 +239,12 @@ public class Algorithms {
         }
         return chunkedimages;
     }
+
+    /**
+     * autoadd -- method for getrowcol
+     * @param intstring
+     * @return
+     */
     public static int autoadd (String intstring){
         int num = Integer.parseInt(intstring, 16);
         if (num <= 4){
@@ -257,6 +263,13 @@ public class Algorithms {
             return 0;
         }
     }
+
+    /**
+     * getrowcol -- method for option 0 and 1
+     * @param password
+     * @param addwidth
+     * @return
+     */
     public static int[] getrowcol (String password, int addwidth){
         byte[] passbyte;
         try {
