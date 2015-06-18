@@ -53,5 +53,7 @@
     <string name="scrambling_widthheight_text">You will need to input your password, row and column number. If you want to send through apps that compress images, also input\n</string>
     <string name="scrambling_widthheight_text2">as width and</string>
     <string name="scrambling_widthheight_text3">as height.</string>
-    <string name="scrambling_copied">Copied parameters (except password) in terms of: #rows #cols Width Height</string>
+    <string name="scrambling_copied_0">Copied parameters (except password) in terms of: Width Height</string>
+    <string name="scrambling_copied_1">Copied parameters (except password) in terms of: Quality Width Height</string>
+    <string name="scrambling_copied_2">Copied parameters (except password) in terms of: #rows #cols Width Height</string>
 </resources>

@@ -239,4 +239,35 @@ public class Algorithms {
         }
         return chunkedimages;
     }
+    public static int autoadd (String intstring){
+        int num = Integer.parseInt(intstring, 16);
+        if (num <= 4){
+            return 1;
+        }
+        else if (num <= 8){
+            return 2;
+        }
+        else if (num <= 12){
+            return 3;
+        }
+        else if (num <= 16){
+            return 4;
+        }
+        else {
+            return 0;
+        }
+    }
+    public static int[] getrowcol (String password, int addwidth){
+        byte[] passbyte;
+        try {
+            passbyte = password.getBytes("UTF-8");
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        String hexpass = bytesToHex(getHash(passbyte));
+        int row = Integer.parseInt(hexpass.substring(0,1),16) + autoadd(hexpass.substring(1,2));
+        int col = Integer.parseInt(hexpass.substring(2,3),16) + autoadd(hexpass.substring(3,4));
+        int[] result = new int[] {row+addwidth, col+addwidth};
+        return result;
+    }
 }

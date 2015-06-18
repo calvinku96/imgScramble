@@ -44,8 +44,9 @@ public class ScramblingActivity extends ActionBarActivity {
     SeekBar seekBar;
     private ClipboardManager clipboard;
     private ClipData clipdata;
-    String copystring;
     String optionstring;
+    int[] copylist;
+    String qualityseekbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +88,7 @@ public class ScramblingActivity extends ActionBarActivity {
         String scramblestring = extras.getString("EXTRA_SCRAMBLE");
         String imagewidthstring = extras.getString("EXTRA_WIDTH");
         String imageheightstring = extras.getString("EXTRA_HEIGHT");
+        qualityseekbar = extras.getString("EXTRA_SEEKBAR");
         optionstring = extras.getString("EXTRA_OPTIONS");
         if (scramblestring.equals("d")) {
             scrambleboolean = true;
@@ -94,6 +96,18 @@ public class ScramblingActivity extends ActionBarActivity {
         imageuri = Uri.parse(imageuristring);
         LinearLayout layout = (LinearLayout) findViewById(R.id.scrambling_picture_parent_layout);
         layout.setVisibility(View.GONE);
+
+        //Find row and columns
+        if (optionstring.equals("0") || optionstring.equals("1")) {
+            int qualityadder = Integer.parseInt(qualityseekbar) * 20;
+            if (optionstring.equals("0")) {
+                qualityadder = 60;
+            }
+            int[] rowcol = Algorithms.getrowcol(scramblepassword, qualityadder);
+            rowstring = Integer.toString(rowcol[0]);
+            colstring = Integer.toString(rowcol[1]);
+        }
+
         String[] splitimageinput = new String[]{imageuristring, rowstring, colstring,
                 scramblestring, imagewidthstring, imageheightstring};
         SplitImage splitImage = new SplitImage(splitimageinput);
@@ -184,10 +198,8 @@ public class ScramblingActivity extends ActionBarActivity {
                     + getString(R.string.scrambling_widthheight_text2) + " "
                     + outputimage.getHeight() + " "
                     + getString(R.string.scrambling_widthheight_text3));
-            copystring = rowstring + " "
-                    + colstring + " "
-                    + Integer.toString(outputimage.getWidth()) + " "
-                    + Integer.toString(outputimage.getHeight());
+            copylist = new int[]{Integer.parseInt(rowstring), Integer.parseInt(colstring),
+                    outputimage.getWidth(), outputimage.getHeight()};
         }
     }
 
@@ -442,9 +454,56 @@ public class ScramblingActivity extends ActionBarActivity {
      * @param v
      */
     public void scramblingCopyImage(View v) {
+        String copystring;
+        String copiedstring;
+        switch (Integer.parseInt(optionstring)) {
+            case 0:
+                copystring = Integer.toString(copylist[2]) + " "
+                        + Integer.toString(copylist[3]);
+                copiedstring = getString(R.string.scrambling_copied_0);
+                break;
+            case 1:
+                String qualitytext = "";
+                switch (Integer.parseInt(qualityseekbar)) {
+                    case 0:
+                        qualitytext = getString(R.string.scramble_option_0);
+                        break;
+                    case 1:
+                        qualitytext = getString(R.string.scramble_option_1);
+                        break;
+                    case 2:
+                        qualitytext = getString(R.string.scramble_option_2);
+                        break;
+                    case 3:
+                        qualitytext = getString(R.string.scramble_option_3);
+                        break;
+                    case 4:
+                        qualitytext = getString(R.string.scramble_option_4);
+                        break;
+                }
+                copystring = qualitytext + " "
+                        + Integer.toString(copylist[2]) + " "
+                        + Integer.toString(copylist[3]);
+                copiedstring = getString(R.string.scrambling_copied_1);
+                break;
+            case 2:
+                copystring = Integer.toString(copylist[0]) + " "
+                        + Integer.toString(copylist[1]) + " "
+                        + Integer.toString(copylist[2]) + " "
+                        + Integer.toString(copylist[3]);
+                copiedstring = getString(R.string.scrambling_copied_2);
+                break;
+            default:
+                copystring = Integer.toString(copylist[0]) + " "
+                        + Integer.toString(copylist[1]) + " "
+                        + Integer.toString(copylist[2]) + " "
+                        + Integer.toString(copylist[3]);
+                copiedstring = getString(R.string.scrambling_copied_2);
+                break;
+        }
         clipdata = ClipData.newPlainText("text", copystring);
         clipboard.setPrimaryClip(clipdata);
-        Toast.makeText(this, getString(R.string.scrambling_copied),
+        Toast.makeText(this, copiedstring,
                 Toast.LENGTH_SHORT).show();
     }
 
