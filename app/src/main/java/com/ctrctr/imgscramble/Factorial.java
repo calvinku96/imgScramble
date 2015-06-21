@@ -1,4 +1,4 @@
-package com.example.calvin.imgscramble;
+package com.ctrctr.imgscramble;
 
 import java.math.BigInteger;
 

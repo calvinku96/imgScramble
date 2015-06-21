@@ -1,4 +1,4 @@
-package com.example.calvin.imgscramble;
+package com.ctrctr.imgscramble;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;

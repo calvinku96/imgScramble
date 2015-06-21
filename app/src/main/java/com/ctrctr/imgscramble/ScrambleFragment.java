@@ -1,4 +1,4 @@
-package com.example.calvin.imgscramble;
+package com.ctrctr.imgscramble;
 
 import android.app.Activity;
 import android.os.Bundle;

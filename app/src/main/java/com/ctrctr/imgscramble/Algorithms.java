@@ -1,4 +1,4 @@
-package com.example.calvin.imgscramble;
+package com.ctrctr.imgscramble;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
