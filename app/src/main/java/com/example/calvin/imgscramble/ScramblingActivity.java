@@ -355,6 +355,8 @@ public class ScramblingActivity extends ActionBarActivity {
     public void scramblingShare(View v) {
         String filename = getFileName(imageuri);
         int seekbarprogress = getSeekBarProgress(seekBar);
+        Toast.makeText(this, getString(R.string.scrambling_scramblingShareImage_sharing),
+                Toast.LENGTH_SHORT).show();
         ScramblingSaveImageAsyncTask sa = new ScramblingSaveImageAsyncTask(filename,
                 outputimage, seekbarprogress, true);
         sa.execute("");
@@ -402,9 +404,9 @@ public class ScramblingActivity extends ActionBarActivity {
             Time today = new Time(Time.getCurrentTimezone());
             today.setToNow();
             String datestring = today.format("%Y-%m-%d-%H:%M:%S");
-            filename = "imgScramble_text_" + datestring + "_q"
+            filename = "imgScramble_ouput_" + datestring + "_q"
                     + getSeekBarProgress(seekBar) + "_"
-                    + filename.substring(0, filename.length() - 4) + ".jpg";
+                    + filename.substring(0, Math.min(filename.length() - 4,10)) + ".jpg";
             byte[] imagebytearray = convertImageToJPEG(imageoutput, seekbarprogress);
             //save image
             String sdCard;

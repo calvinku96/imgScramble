@@ -3,6 +3,7 @@ package com.example.calvin.imgscramble;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.net.Uri;
 
@@ -184,15 +185,19 @@ public class Algorithms {
      */
     public static ArrayList<Bitmap> splitImageMethod (String[] params, InputStream imageInputStream){
         Uri imageuri = Uri.parse(params[0]);
-            int row = Integer.parseInt(params[1]);
-            int col = Integer.parseInt(params[2]);
-            //Store all the image chunks
-            ArrayList<Bitmap> chunkedimages = new ArrayList<Bitmap>(row * col);
-            //Convert Uri to Bitmap
+        int row = Integer.parseInt(params[1]);
+        int col = Integer.parseInt(params[2]);
+        //Store all the image chunks
+        ArrayList<Bitmap> chunkedimages = new ArrayList<Bitmap>(row * col);
+        //Convert Uri to Bitmap
         if (!(params[4].equals("") && params[5].equals(""))&& params[3].equals("d")) {
             try {
                 BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(imageInputStream,
                         false);
+                int largerwidth = (int) Math.ceil((double) decoder.getWidth()/(double) col) * col;
+                int largerheight = (int) Math.ceil((double)decoder.getHeight()/(double) row) * row;
+                Matrix matrixtranslate = new Matrix();
+                matrixtranslate.postTranslate(0f,0f);
                 int chunkWidth = Integer.parseInt(params[4]) / col;
                 int chunkHeight = Integer.parseInt(params[5]) / row;
                 Bitmap wholeimage = decoder.decodeRegion(new Rect(0, 0, decoder.getWidth(),
@@ -218,15 +223,32 @@ public class Algorithms {
             try {
                 BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(imageInputStream,
                         false);
-                int chunkHeight = decoder.getHeight() / row;
-                int chunkWidth = decoder.getWidth() / col;
+                int largerwidth = (int) Math.ceil((double) decoder.getWidth()/(double) col) * col;
+                int largerheight = (int) Math.ceil((double)decoder.getHeight()/(double) row) * row;
+
+                int decodergetwidth = decoder.getWidth();
+                int decodergetheight = decoder.getHeight();
+
+                int chunkHeight = largerheight / row;
+                int chunkWidth = largerwidth / col;
+
+                Bitmap originalbitmap = decoder.decodeRegion(new Rect(0, 0, decoder.getWidth(),
+                        decoder.getHeight()), null);
+
+                Bitmap newbitmap = Bitmap.createBitmap(largerwidth, largerheight,
+                        Bitmap.Config.ARGB_8888);
+                Canvas newcanvas = new Canvas(newbitmap);
+                newcanvas.drawBitmap(originalbitmap, 0f, 0f, null);
+
+                int newbitmapwidth = newbitmap.getWidth();
+                int newbitmapheight = newbitmap.getHeight();
 
                 int yCoord = 0;
                 for (int y = 0; y < row; y++) {
                     int xCoord = 0;
                     for (int x = 0; x < col; x++) {
-                        Bitmap tempimage = decoder.decodeRegion(new Rect(xCoord, yCoord,
-                                xCoord + chunkWidth, yCoord + chunkHeight), null);
+                        Bitmap tempimage = Bitmap.createBitmap(newbitmap, xCoord, yCoord,
+                                chunkWidth, chunkHeight);
                         chunkedimages.add(tempimage);
                         xCoord += chunkWidth;
                     }
@@ -237,6 +259,7 @@ public class Algorithms {
             }
 
         }
+        ArrayList<Bitmap> a = chunkedimages;
         return chunkedimages;
     }
 

@@ -27,8 +27,8 @@
     <string name="scramble_options">Options: </string>
     <string-array name="scramble_options_array">
         <item>Set everything automatically, just pick the password</item>
-        <item>Generate number of rows and columns automatically from password, image may be extended due to dimension constraint</item>
-        <item>Pick number of rows and columns, extend image to adjust to selected number of rows and columns</item>
+        <item>Generate number of rows and columns automatically from password</item>
+        <item>Pick number of rows and columns</item>
     </string-array>
     <string name="scramble_option_0">Very Coarse</string>
     <string name="scramble_option_1">Coarse</string>
@@ -56,4 +56,32 @@
     <string name="scrambling_copied_0">Copied parameters (except password) in terms of: Width Height</string>
     <string name="scrambling_copied_1">Copied parameters (except password) in terms of: Quality Width Height</string>
     <string name="scrambling_copied_2">Copied parameters (except password) in terms of: #rows #cols Width Height</string>
+    <string name="scrambling_scramblingShareImage_sharing">Preparing to Share...</string>
+
+
+
+    <string name="about_title_general">General</string>
+    <string name="about_title_scramble">How to Scramble</string>
+    <string name="about_title_descramble">How to Descramble</string>
+
+    <string name="about_content_general">IMGSCRAMBLE MAY CROP THE IMAGE DUE TO CONSTRAINTS WITH IMAGE DIMENSIONS AND THE SELECTED NUMBER OF ROW AND COLUMN.\n
+        imgScramble divides the image into selected number of rows and columns and rearrange them according to the password.
+         This provides a poor man\'s encryption for the image so that only people having access to the password are able to see the contents of the image.
+         Although using encryption solution that change the value of the image bit by bit is more secure, it cannot be decrypted after sharing through apps that uses jpeg compression.
+         This is a why we choose to simply scramble the image as although there are minor artifacts, the whole image can still be reproduced regardless of the fact that it went through jpeg compression.</string>
+    <string name="about_content_scramble">1. Select the image you want to scramble (or optionally from camera).\n
+2. Choose a password you want the scramble to be based on.\n
+3. Choose an option to specify the input.\n
+4. Choose how small the individual blocks you want to be by choosing the number of rows and columns.\n
+5. You can also choose a random password, number of rows and number of columns.\n
+6. Press Start.\n
+7. You can choose the quality of the image to save (in JPEG).\n
+8. Then you can save the image (by pressing the save button) and share (by pressing the share button).\n
+9. Please remember all the necessary inputs to descramble the image.</string>
+    <string name="about_content_descramble">1. Select the image you want to descramble.\n
+2. Use the exact same option.\n
+3. Fill in the necesary password, row and column if necessary.\n
+4. If you receive the image from apps that uses JPEG compression, also fill in the Width and Height. Images that are not received from apps that usess JPEG compression does not need the Width and Height parameters.\n
+5. Select Descramble and Start.\n
+6. You then can view and/or save the image.</string>
 </resources>
