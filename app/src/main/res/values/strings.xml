@@ -64,7 +64,7 @@
     <string name="about_title_scramble">How to Scramble</string>
     <string name="about_title_descramble">How to Descramble</string>
 
-    <string name="about_content_general">IMGSCRAMBLE MAY CROP THE IMAGE DUE TO CONSTRAINTS WITH IMAGE DIMENSIONS AND THE SELECTED NUMBER OF ROW AND COLUMN.\n
+    <string name="about_content_general">IMGSCRAMBLE MAY ALTER THE IMAGE DUE TO CONSTRAINTS WITH IMAGE DIMENSIONS AND THE SELECTED NUMBER OF ROW AND COLUMN.\n
         imgScramble divides the image into selected number of rows and columns and rearrange them according to the password.
          This provides a poor man\'s encryption for the image so that only people having access to the password are able to see the contents of the image.
          Although using encryption solution that change the value of the image bit by bit is more secure, it cannot be decrypted after sharing through apps that uses jpeg compression.
