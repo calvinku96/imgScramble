@@ -18,9 +18,10 @@ public class Algorithms {
 
     /**
      * getHashMultiple -- calls the getHash function mul times
-     * @param mul - times to hash
+     *
+     * @param mul  - times to hash
      * @param pass - password
-     * @return
+     * @return byte array of hash
      */
     public static byte[] getHashMultiple(int mul, byte[] pass) {
         for (int i = 0; i < mul; i++) {
@@ -31,8 +32,9 @@ public class Algorithms {
 
     /**
      * getHash -- do SHA-256 hash
+     *
      * @param pass - password
-     * @return
+     * @return byte array of the SHA-256 hash
      */
     public static byte[] getHash(byte[] pass) {
         //Do as SHA-256 hash once
@@ -47,7 +49,8 @@ public class Algorithms {
 
     /**
      * byteToHex -- turn byte[] to Hex String
-     * @param bytes
+     *
+     * @param bytes byte array of hash
      * @return String - Hex String
      */
     public static String bytesToHex(byte[] bytes) {
@@ -63,6 +66,7 @@ public class Algorithms {
 
     /**
      * encode -- Turn the lehmer code d into the falling factorial sequence of numbers
+     *
      * @param n - length of sequence
      * @param d - Lehmer Code
      * @return int[] - falling factorial sequence
@@ -81,7 +85,8 @@ public class Algorithms {
 
     /**
      * ffs2seq -- Convert the falling factorial sequence to the combination sequence
-     * @param n - length of sequence
+     *
+     * @param n     - length of sequence
      * @param input - falling factorial sequence
      * @return int[] falling factorial sequence
      */
@@ -95,7 +100,6 @@ public class Algorithms {
         }
         return input;
     }
-
 
 
     /**
@@ -140,10 +144,7 @@ public class Algorithms {
     /**
      * Methods for HashNum Runnable
      */
-    public static int[] hashNumMethod(String[] params) {
-        String password = params[0];
-        int row = Integer.parseInt(params[1]);
-        int col = Integer.parseInt(params[2]);
+    public static int[] hashNumMethod(String password, int row, int col) {
         int n = row * col;
         //Generates the lehmer code in base-16 using hashing functions.
         //Calculate the number of digits we should have
@@ -176,40 +177,38 @@ public class Algorithms {
         //Lehmer
         BigInteger d = new BigInteger(output, 16);
         int[] code = encode(n, d);
-        int[] perm = ffs2seq(n, code);
-        return perm;
+        return ffs2seq(n, code);
     }
 
     /**
      * Methods for SplitImage
      */
-    public static ArrayList<Bitmap> splitImageMethod (String[] params, InputStream imageInputStream){
-        Uri imageuri = Uri.parse(params[0]);
-        int row = Integer.parseInt(params[1]);
-        int col = Integer.parseInt(params[2]);
+    public static ArrayList<Bitmap> splitImageMethod(int row, int col, boolean scrambleboolean,
+                                                     String imagewidthstring,
+                                                     String imageheightstring,
+                                                     InputStream imageInputStream) {
         //Store all the image chunks
-        ArrayList<Bitmap> chunkedimages = new ArrayList<Bitmap>(row * col);
-        //Convert Uri to Bitmap
-        if (!(params[4].equals("") && params[5].equals(""))&& params[3].equals("d")) {
+        ArrayList<Bitmap> chunkedimages = new ArrayList<>(row * col);
+        if (!(imagewidthstring.equals("") && imageheightstring.equals("")) &&
+                scrambleboolean) {
             try {
                 BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(imageInputStream,
                         false);
-                int largerwidth = (int) Math.ceil((double) decoder.getWidth()/(double) col) * col;
-                int largerheight = (int) Math.ceil((double)decoder.getHeight()/(double) row) * row;
                 Matrix matrixtranslate = new Matrix();
-                matrixtranslate.postTranslate(0f,0f);
-                int chunkWidth = Integer.parseInt(params[4]) / col;
-                int chunkHeight = Integer.parseInt(params[5]) / row;
+                matrixtranslate.postTranslate(0f, 0f);
+                int chunkWidth = Integer.parseInt(imagewidthstring) / col;
+                int chunkHeight = Integer.parseInt(imageheightstring) / row;
                 Bitmap wholeimage = decoder.decodeRegion(new Rect(0, 0, decoder.getWidth(),
                         decoder.getHeight()), null);
                 Bitmap scaledimage = Bitmap.createScaledBitmap(wholeimage,
-                        Integer.parseInt(params[4]), Integer.parseInt(params[5]), false);
+                        Integer.parseInt(imagewidthstring),
+                        Integer.parseInt(imageheightstring), false);
 
                 int yCoord = 0;
                 for (int y = 0; y < row; y++) {
                     int xCoord = 0;
                     for (int x = 0; x < col; x++) {
-                        Bitmap tempimage = Bitmap.createBitmap(scaledimage, xCoord , yCoord,
+                        Bitmap tempimage = Bitmap.createBitmap(scaledimage, xCoord, yCoord,
                                 chunkWidth, chunkHeight);
                         chunkedimages.add(tempimage);
                         xCoord += chunkWidth;
@@ -223,11 +222,8 @@ public class Algorithms {
             try {
                 BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(imageInputStream,
                         false);
-                int largerwidth = (int) Math.ceil((double) decoder.getWidth()/(double) col) * col;
-                int largerheight = (int) Math.ceil((double)decoder.getHeight()/(double) row) * row;
-
-                int decodergetwidth = decoder.getWidth();
-                int decodergetheight = decoder.getHeight();
+                int largerwidth = (int) Math.ceil((double) decoder.getWidth() / (double) col) * col;
+                int largerheight = (int) Math.ceil((double) decoder.getHeight() / (double) row) * row;
 
                 int chunkHeight = largerheight / row;
                 int chunkWidth = largerwidth / col;
@@ -239,9 +235,6 @@ public class Algorithms {
                         Bitmap.Config.ARGB_8888);
                 Canvas newcanvas = new Canvas(newbitmap);
                 newcanvas.drawBitmap(originalbitmap, 0f, 0f, null);
-
-                int newbitmapwidth = newbitmap.getWidth();
-                int newbitmapheight = newbitmap.getHeight();
 
                 int yCoord = 0;
                 for (int y = 0; y < row; y++) {
@@ -259,41 +252,32 @@ public class Algorithms {
             }
 
         }
-        ArrayList<Bitmap> a = chunkedimages;
         return chunkedimages;
     }
 
-    /**
-     * autoadd -- method for getrowcol
-     * @param intstring
-     * @return
-     */
-    public static int autoadd (String intstring){
+    public static int autoadd(String intstring) {
         int num = Integer.parseInt(intstring, 16);
-        if (num <= 4){
+        if (num <= 4) {
             return 1;
-        }
-        else if (num <= 8){
+        } else if (num <= 8) {
             return 2;
-        }
-        else if (num <= 12){
+        } else if (num <= 12) {
             return 3;
-        }
-        else if (num <= 16){
+        } else if (num <= 16) {
             return 4;
-        }
-        else {
+        } else {
             return 0;
         }
     }
 
     /**
      * getrowcol -- method for option 0 and 1
-     * @param password
-     * @param addwidth
-     * @return
+     *
+     * @param password password
+     * @param addwidth addition by seekBar/password
+     * @return row and col
      */
-    public static int[] getrowcol (String password, int addwidth){
+    public static int[] getrowcol(String password, int addwidth) {
         byte[] passbyte;
         try {
             passbyte = password.getBytes("UTF-8");
@@ -301,9 +285,8 @@ public class Algorithms {
             throw new RuntimeException(ex);
         }
         String hexpass = bytesToHex(getHash(passbyte));
-        int row = Integer.parseInt(hexpass.substring(0,1),16) + autoadd(hexpass.substring(1,2));
-        int col = Integer.parseInt(hexpass.substring(2,3),16) + autoadd(hexpass.substring(3,4));
-        int[] result = new int[] {row+addwidth, col+addwidth};
-        return result;
+        int row = Integer.parseInt(hexpass.substring(0, 1), 16) + autoadd(hexpass.substring(1, 2));
+        int col = Integer.parseInt(hexpass.substring(2, 3), 16) + autoadd(hexpass.substring(3, 4));
+        return new int[]{row + addwidth, col + addwidth};
     }
 }

@@ -12,8 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,7 +34,7 @@ import java.util.Locale;
 import java.util.Random;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -54,7 +53,6 @@ public class MainActivity extends ActionBarActivity {
     private static final int SELECT_PICTURE = 1;
     boolean selected = false;
     private ClipboardManager clipboard;
-    private ClipData clipdata;
     Uri selectedImageUri;
     static final int REQUEST_TAKE_PHOTO = 2;
     boolean showpasswordstatus = true;
@@ -65,8 +63,6 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -95,7 +91,7 @@ public class MainActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        //int id = item.getItemId();
         //noinspection SimplifiableIfStatement
 
         //No Options Menu
@@ -178,7 +174,7 @@ public class MainActivity extends ActionBarActivity {
 
     /**
      * scrambleStart -- Checks for input fields, Make intent
-     * @param v
+     * @param v View
      */
     public void scrambleStart(View v) {
         //Toast.makeText(this, "Scrambling", Toast.LENGTH_SHORT).show();
@@ -193,16 +189,11 @@ public class MainActivity extends ActionBarActivity {
             EditText imageheight = (EditText) findViewById(R.id.scramble_image_height);
             RadioButton descrambleradio;
             descrambleradio = (RadioButton) findViewById(R.id.scramble_radio_descramble);
-            String scrambleradiostring = "s";
-            String scrambleimagewidth = imagewidth.getText().toString();
-            String scrambleimageheight = imageheight.getText().toString();
-            boolean descrambleradioisChecked = descrambleradio.isChecked();
+            String scrambleimagewidthstring = imagewidth.getText().toString();
+            String scrambleimageheightstring = imageheight.getText().toString();
             Spinner spinner = (Spinner) findViewById(R.id.scramble_option_spinner);
             SeekBar imagequalityseekbar;
             imagequalityseekbar = (SeekBar) findViewById(R.id.scramble_image_quality_seekBar);
-            if (descrambleradioisChecked) {
-                scrambleradiostring = "d";
-            }
             //Maybe Included in Upcomming Feature
             //boolean rowtextfilled = true;
             //boolean coltextfilled = true;
@@ -235,15 +226,16 @@ public class MainActivity extends ActionBarActivity {
                 Bundle extras = new Bundle();
                 extras.putString("EXTRA_IMAGE", imageuristring);
                 extras.putString("EXTRA_PASS", scramblepassword.getText().toString());
-                extras.putString("EXTRA_ROW", rowtext.getText().toString());
-                extras.putString("EXTRA_COL", coltext.getText().toString());
-                extras.putString("EXTRA_WIDTH", scrambleimagewidth);
-                extras.putString("EXTRA_HEIGHT", scrambleimageheight);
-                extras.putString("EXTRA_SCRAMBLE", scrambleradiostring);
+                extras.putInt("EXTRA_ROW", (rowtext.getText().toString().length() > 0)
+                        ? Integer.parseInt(rowtext.getText().toString()) : 0);
+                extras.putInt("EXTRA_COL", (coltext.getText().toString().length() > 0)
+                        ? Integer.parseInt(coltext.getText().toString()) : 0);
+                extras.putString("EXTRA_WIDTH", scrambleimagewidthstring);
+                extras.putString("EXTRA_HEIGHT", scrambleimageheightstring);
+                extras.putBoolean("EXTRA_SCRAMBLE_RADIO", descrambleradio.isChecked());
                 extras.putString("EXTRA_SEEKBAR",
                         Integer.toString(imagequalityseekbar.getProgress()));
-                extras.putString("EXTRA_OPTIONS",
-                        Integer.toString(spinner.getSelectedItemPosition()));
+                extras.putInt("EXTRA_OPTIONS", spinner.getSelectedItemPosition());
                 intent.putExtras(extras);
                 startActivity(intent);
             }
@@ -256,7 +248,7 @@ public class MainActivity extends ActionBarActivity {
 
     /**
      * scrambleRandom -- Randomize the inputs
-     * @param v
+     * @param v View
      */
     public void scrambleRandom(View v) {
         //Toast.makeText(this, "Random", Toast.LENGTH_SHORT).show();
@@ -275,19 +267,19 @@ public class MainActivity extends ActionBarActivity {
 
     /**
      * scrambleCopyPassword -- Copy the password field
-     * @param v
+     * @param v View
      */
     public void scrambleCopyPassword(View v) {
         EditText scramblepassword = (EditText) findViewById(R.id.scramble_password);
         String cliptext = scramblepassword.getText().toString();
-        clipdata = ClipData.newPlainText("text", cliptext);
+        ClipData clipdata = ClipData.newPlainText("text", cliptext);
         clipboard.setPrimaryClip(clipdata);
         Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show();
     }
 
     /**
      * scrambleShowPassword -- Toggle the password field to show the password
-     * @param v
+     * @param v View
      */
     public void scrambleShowPassword(View v) {
         //Toast.makeText(this, "Show Password", Toast.LENGTH_SHORT).show();
@@ -307,7 +299,7 @@ public class MainActivity extends ActionBarActivity {
 
     /**
      * openCamera -- Open camera and send the intent
-     * @param v
+     * @param v View
      */
     public void openCamera(View v) {
         PackageManager packageManager = this.getPackageManager();
@@ -337,7 +329,7 @@ public class MainActivity extends ActionBarActivity {
     /**
      * createImageFile -- Save the image from the intent from camera
      * @return File -- Return the image file
-     * @throws IOException
+     * @throws IOException - If cannot create image file
      */
     private File createImageFile() throws IOException {
         //Create an image file name
@@ -361,7 +353,7 @@ public class MainActivity extends ActionBarActivity {
 
     /**
      * scrambleScrambleOnClick -- Turn option to scramble; disable EditText on the Width and Height
-     * @param v
+     * @param v View
      */
     public void scrambleScrambleOnClick (View v){
         EditText widthedittext = (EditText) findViewById(R.id.scramble_image_width);
@@ -373,7 +365,7 @@ public class MainActivity extends ActionBarActivity {
     /**
      * scrambleDescrambleOnClick -- Turn option to descramble; enable EditText on the
      * Width and Height
-     * @param v
+     * @param v View
      */
     public void scrambleDescrambleOnClick (View v){
         EditText widthedittext = (EditText) findViewById(R.id.scramble_image_width);
@@ -381,5 +373,4 @@ public class MainActivity extends ActionBarActivity {
         widthedittext.setEnabled(true);
         heightedittext.setEnabled(true);
     }
-
 }

@@ -45,9 +45,8 @@ public class ScrambleFragment extends Fragment {
         heightedittext.setEnabled(false);
 
         // Init Spinner
-        Spinner spinner = (Spinner) a.findViewById(R.id.scramble_option_spinner);
         AdapterView.OnItemSelectedListener scramblespinnerlistener = new SpinnerActivity();
-        spinner.setOnItemSelectedListener(scramblespinnerlistener);
+        optionspinner.setOnItemSelectedListener(scramblespinnerlistener);
 
 
         OptionList = new String[]{getString(R.string.scramble_option_0),

@@ -7,11 +7,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.OpenableColumns;
-import android.support.v7.app.ActionBarActivity;
-import android.text.format.Time;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,25 +26,25 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 
-public class ScramblingActivity extends ActionBarActivity {
-    final protected static char[] hexArray = "0123456789abcdef".toCharArray();
+public class ScramblingActivity extends AppCompatActivity {
     ArrayList<Bitmap> imagearray;
     int[] permarray;
     boolean imagearraypresent = false;
     boolean permarraypresent = false;
     boolean scrambleboolean = false; //false when scramble, true when descramble
-    String rowstring;
-    String colstring;
+    int row;
+    int col;
     Bitmap outputimage;
     boolean scramblingdone = false;
     Uri imageuri;
     SeekBar seekBar;
     private ClipboardManager clipboard;
-    private ClipData clipdata;
-    String optionstring;
+    int options;
     int[] copylist;
     String qualityseekbar;
 
@@ -83,36 +83,30 @@ public class ScramblingActivity extends ActionBarActivity {
         Bundle extras = intent.getExtras();
         String imageuristring = extras.getString("EXTRA_IMAGE");
         String scramblepassword = extras.getString("EXTRA_PASS");
-        rowstring = extras.getString("EXTRA_ROW");
-        colstring = extras.getString("EXTRA_COL");
-        String scramblestring = extras.getString("EXTRA_SCRAMBLE");
+        row = extras.getInt("EXTRA_ROW");
+        col = extras.getInt("EXTRA_COL");
         String imagewidthstring = extras.getString("EXTRA_WIDTH");
         String imageheightstring = extras.getString("EXTRA_HEIGHT");
         qualityseekbar = extras.getString("EXTRA_SEEKBAR");
-        optionstring = extras.getString("EXTRA_OPTIONS");
-        if (scramblestring.equals("d")) {
-            scrambleboolean = true;
-        }
+        options = extras.getInt("EXTRA_OPTIONS");
+        scrambleboolean = extras.getBoolean("EXTRA_SCRAMBLE_RADIO");
         imageuri = Uri.parse(imageuristring);
         LinearLayout layout = (LinearLayout) findViewById(R.id.scrambling_picture_parent_layout);
         layout.setVisibility(View.GONE);
 
         //Find row and columns
-        if (optionstring.equals("0") || optionstring.equals("1")) {
+        if (options == 0 || options == 1) {
             int qualityadder = Integer.parseInt(qualityseekbar) * 20;
-            if (optionstring.equals("0")) {
+            if (options == 0) {
                 qualityadder = 60;
             }
             int[] rowcol = Algorithms.getrowcol(scramblepassword, qualityadder);
-            rowstring = Integer.toString(rowcol[0]);
-            colstring = Integer.toString(rowcol[1]);
+            row = rowcol[0];
+            col = rowcol[1];
         }
-
-        String[] splitimageinput = new String[]{imageuristring, rowstring, colstring,
-                scramblestring, imagewidthstring, imageheightstring};
-        SplitImage splitImage = new SplitImage(splitimageinput);
-        String[] hashnuminput = new String[]{scramblepassword, rowstring, colstring};
-        HashNum hashNum = new HashNum(hashnuminput);
+        SplitImage splitImage = new SplitImage(imageuri, row, col, scrambleboolean,
+                imagewidthstring, imageheightstring);
+        HashNum hashNum = new HashNum(scramblepassword, row, col);
         new Thread(splitImage).start();
         new Thread(hashNum).start();
 
@@ -137,7 +131,7 @@ public class ScramblingActivity extends ActionBarActivity {
     public void finishHashSplit() {
         if (imagearraypresent && permarraypresent) {
             RearrangeImage re = new RearrangeImage(imagearray, permarray, scrambleboolean,
-                    Integer.parseInt(rowstring), Integer.parseInt(colstring));
+                    row, col);
             editProgressText(R.string.scrambling_rearrange_image);
             new Thread(re).start();
         }
@@ -154,7 +148,7 @@ public class ScramblingActivity extends ActionBarActivity {
         int col;
 
         public RearrangeImage(ArrayList<Bitmap> imagearray, int[] permarray,
-                              boolean scrambleboolen, int row, int col) {
+                              boolean scrambleboolean, int row, int col) {
             //init
             this.imagearray = imagearray;
             this.permarray = permarray;
@@ -198,15 +192,14 @@ public class ScramblingActivity extends ActionBarActivity {
                     + getString(R.string.scrambling_widthheight_text2) + " "
                     + outputimage.getHeight() + " "
                     + getString(R.string.scrambling_widthheight_text3));
-            copylist = new int[]{Integer.parseInt(rowstring), Integer.parseInt(colstring),
-                    outputimage.getWidth(), outputimage.getHeight()};
+            copylist = new int[]{row, col, outputimage.getWidth(), outputimage.getHeight()};
         }
     }
 
     /**
      * editProgressText -- Handles the loading screen textView
      *
-     * @param text
+     * @param text - text to be put to the loading string
      */
     public void editProgressText(int text) {
         TextView loadingtext = (TextView) findViewById(R.id.scrambling_loading);
@@ -217,15 +210,18 @@ public class ScramblingActivity extends ActionBarActivity {
      * HashNum -- Runnable syncTask for Hashing
      */
     private class HashNum implements Runnable {
-        String[] params;
+        String password;
+        int row, col;
 
-        public HashNum(String[] params) {
-            this.params = params;
+        public HashNum(String scramblepassword, int row, int col){
+            this.password = scramblepassword;
+            this.row = row;
+            this.col = col;
         }
 
         @Override
         public void run() {
-            int[] result = Algorithms.hashNumMethod(params);
+            int[] result = Algorithms.hashNumMethod(password, row, col);
             PostHashNum postHashNum = new PostHashNum(result);
             runOnUiThread(postHashNum);
         }
@@ -250,18 +246,27 @@ public class ScramblingActivity extends ActionBarActivity {
      * SplitImage -- Runnable to split image
      */
     private class SplitImage implements Runnable {
-        String[] params;
+        Uri imageuri;
+        int row, col;
+        boolean scrambleboolean;
+        String imagewidthstring, imageheightstring;
 
-        public SplitImage(String[] params) {
-            this.params = params;
+        public SplitImage(Uri imageuri, int row, int col, boolean scrambleboolean,
+                          String imagewidthstring, String imageheightstring) {
+            this.imageuri = imageuri;
+            this.row = row;
+            this.col = col;
+            this.scrambleboolean = scrambleboolean;
+            this.imagewidthstring = imagewidthstring;
+            this.imageheightstring = imageheightstring;
         }
 
         @Override
         public void run() {
-            imageuri = Uri.parse(params[0]);
             try {
                 InputStream imageInputStream = getContentResolver().openInputStream(imageuri);
-                ArrayList<Bitmap> result = Algorithms.splitImageMethod(params, imageInputStream);
+                ArrayList<Bitmap> result = Algorithms.splitImageMethod(row, col, scrambleboolean,
+                        imagewidthstring, imageheightstring, imageInputStream);
                 PostSplitImage postSplitImage = new PostSplitImage(result);
                 runOnUiThread(postSplitImage);
             } catch (Exception ex) {
@@ -300,8 +305,6 @@ public class ScramblingActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
 
         return super.onOptionsItemSelected(item);
@@ -310,19 +313,30 @@ public class ScramblingActivity extends ActionBarActivity {
     /**
      * getFileName -- get the initial file name of the picture
      *
-     * @param uri
-     * @return
+     * @param uri - uri of image
+     * @return filename of image
      */
     public String getFileName(Uri uri) {
         String result = null;
         if (uri.getScheme().equals("content")) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)){
+                    if (cursor != null && cursor.moveToFirst()){
+                        result = cursor.getString(cursor.getColumnIndex(
+                                OpenableColumns.DISPLAY_NAME));
+                    }
                 }
-            } finally {
-                cursor.close();
+            }
+            else {
+                Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+                try {
+                    if (cursor != null && cursor.moveToFirst()) {
+                        result = cursor.getString(cursor.getColumnIndex(
+                                OpenableColumns.DISPLAY_NAME));
+                    }
+                } finally {
+                    cursor.close();
+                }
             }
         }
         if (result == null) {
@@ -338,19 +352,18 @@ public class ScramblingActivity extends ActionBarActivity {
     /**
      * convertImageToJPEG -- Convert image to JPEG
      *
-     * @return
+     * @return byte array of JPEG image
      */
     public byte[] convertImageToJPEG(Bitmap image, int seekbarprogress) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, seekbarprogress, bytes);
-        byte[] imagebytearray = bytes.toByteArray();
-        return imagebytearray;
+        return bytes.toByteArray();
     }
 
     /**
      * scramblingShare -- Share image
      *
-     * @param v
+     * @param v View
      */
     public void scramblingShare(View v) {
         String filename = getFileName(imageuri);
@@ -365,7 +378,7 @@ public class ScramblingActivity extends ActionBarActivity {
     /**
      * scramblingSaveImage -- Save the current image
      *
-     * @param v
+     * @param v View
      */
     public void scramblingSaveImage(View v) {
         if (scramblingdone) {
@@ -401,12 +414,11 @@ public class ScramblingActivity extends ActionBarActivity {
         @Override
         protected File doInBackground(String... params) {
             //Filename
-            Time today = new Time(Time.getCurrentTimezone());
-            today.setToNow();
-            String datestring = today.format("%Y-%m-%d-%H:%M:%S");
+            GregorianCalendar today = new GregorianCalendar();
+            String datestring = new SimpleDateFormat("yyyy-mm-dd-HH:mm:ss").format(today);
             filename = "imgScramble_ouput_" + datestring + "_q"
                     + getSeekBarProgress(seekBar) + "_"
-                    + filename.substring(0, Math.min(filename.length() - 4,10)) + ".jpg";
+                    + filename.substring(0, Math.min(filename.length() - 4, 10)) + ".jpg";
             byte[] imagebytearray = convertImageToJPEG(imageoutput, seekbarprogress);
             //save image
             String sdCard;
@@ -453,12 +465,12 @@ public class ScramblingActivity extends ActionBarActivity {
     /**
      * scramblingCopyImage -- Copy image details
      *
-     * @param v
+     * @param v View
      */
     public void scramblingCopyImage(View v) {
         String copystring;
         String copiedstring;
-        switch (Integer.parseInt(optionstring)) {
+        switch (options) {
             case 0:
                 copystring = Integer.toString(copylist[2]) + " "
                         + Integer.toString(copylist[3]);
@@ -503,7 +515,7 @@ public class ScramblingActivity extends ActionBarActivity {
                 copiedstring = getString(R.string.scrambling_copied_2);
                 break;
         }
-        clipdata = ClipData.newPlainText("text", copystring);
+        ClipData clipdata = ClipData.newPlainText("text", copystring);
         clipboard.setPrimaryClip(clipdata);
         Toast.makeText(this, copiedstring,
                 Toast.LENGTH_SHORT).show();
