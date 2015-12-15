@@ -23,7 +23,7 @@
     <string name="scramble_image_width_hint">Width</string>
     <string name="scramble_image_height_hint">Height</string>
     <string name="scramble_no_widthheight">Input Width and Height to Descramble</string>
-    <string name="scramble_option_pre">Number of Rows and Columns: </string>
+    <string name="scramble_option_pre">Number of Rows and Columns: %s</string>
     <string name="scramble_options">Options: </string>
     <string-array name="scramble_options_array">
         <item>Set everything automatically, just pick the password</item>
@@ -39,24 +39,22 @@
 
     <string name="title_activity_scrambling">imgScramble</string>
     <string name="scrambling_loading">Loading</string>
-    <string name="scrambling_quality">Quality of Image: </string>
+    <string name="scrambling_quality">Quality of Image: %d</string>
     <string name="scrambling_rearrange_image">Rearranging image</string>
     <string name="scrambling_get_permutation">Getting permutation from password</string>
     <string name="scrambling_split_image">Splitting image</string>
     <string name="scrambling_split_image_finish">Finished splitting image</string>
     <string name="scrambling_scramblingSaveImage_saved">Image saved</string>
-    <string name="scrambling_scramblingSaveImage_saving">Saving ...</string>
+    <string name="scrambling_scramblingSaveImage_saving">Saving &#8230;</string>
     <string name="scrambling_scramblingSaveImage_not_done">Image not done</string>
     <string name="scrambling_image_widthheight">WidthHeight</string>
     <string name="scrambling_send_to">Send To</string>
     <string name="scrambling_scramblingSaveText_saved">Image Saved as Text in /Documents/imgScramble</string>
-    <string name="scrambling_widthheight_text">You will need to input your password, row and column number. If you want to send through apps that compress images, also input\n</string>
-    <string name="scrambling_widthheight_text2">as width and</string>
-    <string name="scrambling_widthheight_text3">as height.</string>
+    <string name="scrambling_widthheight_text">You will need to input your password, row and column number. If you want to send through apps that compress images, also input\n %1$d as width and %2$d as height.</string>
     <string name="scrambling_copied_0">Copied parameters (except password) in terms of: Width Height</string>
     <string name="scrambling_copied_1">Copied parameters (except password) in terms of: Quality Width Height</string>
     <string name="scrambling_copied_2">Copied parameters (except password) in terms of: #rows #cols Width Height</string>
-    <string name="scrambling_scramblingShareImage_sharing">Preparing to Share...</string>
+    <string name="scrambling_scramblingShareImage_sharing">Preparing to Share &#8230;</string>
 
 
 
@@ -80,7 +78,7 @@
 9. Please remember all the necessary inputs to descramble the image.</string>
     <string name="about_content_descramble">1. Select the image you want to descramble.\n
 2. Use the exact same option.\n
-3. Fill in the necesary password, row and column if necessary.\n
+3. Fill in the necessary password, row and column if necessary.\n
 4. If you receive the image from apps that uses JPEG compression, also fill in the Width and Height. Images that are not received from apps that usess JPEG compression does not need the Width and Height parameters.\n
 5. Select Descramble and Start.\n
 6. You then can view and/or save the image.</string>

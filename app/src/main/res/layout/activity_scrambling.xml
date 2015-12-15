@@ -7,27 +7,28 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.calvin.imgscramble.ScramblingActivity">
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/scrambling_loading_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical">
         <ProgressBar
             android:id="@+id/scrambling_progressBar"
-            style="?android:attr/progressBarStyleLarge"
+            style="@android:style/Widget.ProgressBar.Large"
+            android:visibility="visible"
+            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/scrambling_loading"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/scrambling_progressBar"
             android:layout_marginTop="30dp"
-            android:layout_toRightOf="@+id/scrambling_progressBar"
-            android:text="@string/scrambling_loading" />
-    </RelativeLayout>
+            android:text="@string/scrambling_loading"
+            android:gravity="center_horizontal" />
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/scrambling_picture_parent_layout"
         android:layout_width="match_parent"

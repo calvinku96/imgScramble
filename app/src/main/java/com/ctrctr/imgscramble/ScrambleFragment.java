@@ -60,7 +60,7 @@ public class ScrambleFragment extends Fragment {
         seekBar = (SeekBar) a.findViewById(R.id.scramble_image_quality_seekBar);
         seekBar.setOnSeekBarChangeListener(new SeekBarListener());
         seekBar.setProgress(3);
-        qualitytext.setText(getString(R.string.scramble_option_pre) + OptionList[3]);
+        qualitytext.setText(String.format(getString(R.string.scramble_option_pre), OptionList[3]));
 
         // Init Row Col
         rowedittext = (EditText) a.findViewById(R.id.scramble_row);
@@ -119,7 +119,8 @@ public class ScrambleFragment extends Fragment {
         public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
             progress = progresValue;
             // Change the Text
-            qualitytext.setText(getString(R.string.scramble_option_pre) + OptionList[progress]);
+            qualitytext.setText(String.format(getString(R.string.scramble_option_pre),
+                    OptionList[progress]));
         }
 
         @Override

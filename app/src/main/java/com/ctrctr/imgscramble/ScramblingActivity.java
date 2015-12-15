@@ -56,7 +56,8 @@ public class ScramblingActivity extends AppCompatActivity {
         TextView seekBartext = (TextView) findViewById(R.id.scrambling_quality_text);
         seekBar = (SeekBar) findViewById(R.id.scrambling_quality_seekBar);
         seekBar.setProgress(9);
-        seekBartext.setText(getString(R.string.scrambling_quality) + getSeekBarProgress(seekBar));
+        seekBartext.setText(String.format(getString(R.string.scrambling_quality),
+                getSeekBarProgress(seekBar)));
         //seekBar Listener
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress = 0;
@@ -65,8 +66,8 @@ public class ScramblingActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
                 progress = progressValue;
                 TextView seekBartext = (TextView) findViewById(R.id.scrambling_quality_text);
-                seekBartext.setText(getString(R.string.scrambling_quality)
-                        + getSeekBarProgress(seekBar));
+                seekBartext.setText(String.format(getString(R.string.scrambling_quality),
+                        getSeekBarProgress(seekBar)));
             }
 
             @Override
@@ -183,15 +184,12 @@ public class ScramblingActivity extends AppCompatActivity {
             image.setImageBitmap(bitmapoutput);
             outputimage = bitmapoutput;
             scramblingdone = true;
-            RelativeLayout progresslayout;
-            progresslayout = (RelativeLayout) findViewById(R.id.scrambling_loading_layout);
+            LinearLayout progresslayout;
+            progresslayout = (LinearLayout) findViewById(R.id.scrambling_loading_layout);
             progresslayout.setVisibility(View.GONE);
             TextView widthheight = (TextView) findViewById(R.id.scrambling_width_height);
-            widthheight.setText(getString(R.string.scrambling_widthheight_text)
-                    + outputimage.getWidth() + " "
-                    + getString(R.string.scrambling_widthheight_text2) + " "
-                    + outputimage.getHeight() + " "
-                    + getString(R.string.scrambling_widthheight_text3));
+            widthheight.setText(String.format(getString(R.string.scrambling_widthheight_text),
+                    outputimage.getWidth(), outputimage.getHeight()));
             copylist = new int[]{row, col, outputimage.getWidth(), outputimage.getHeight()};
         }
     }
