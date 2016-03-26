@@ -337,10 +337,12 @@ public class MainActivity extends AppCompatActivity {
         String imageFileName = "JPEG_" + timeStamp + "_";
         String sdCard;
         sdCard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                + "/imgScramble/Source/";
+                + File.separator + "imgScramble" + File.separator + "Source" + File.separator;
         File storageDir = new File(sdCard);
+        //File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        boolean a = false;
         if (!storageDir.exists()) {
-            storageDir.mkdirs();
+            a = storageDir.mkdirs();
         }
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();

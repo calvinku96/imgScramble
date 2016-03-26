@@ -413,7 +413,7 @@ public class ScramblingActivity extends AppCompatActivity {
         protected File doInBackground(String... params) {
             //Filename
             GregorianCalendar today = new GregorianCalendar();
-            String datestring = new SimpleDateFormat("yyyy-mm-dd-HH:mm:ss").format(today);
+            String datestring = new SimpleDateFormat("yyyy-mm-dd-HH:mm:ss").format(today.getTime());
             filename = "imgScramble_ouput_" + datestring + "_q"
                     + getSeekBarProgress(seekBar) + "_"
                     + filename.substring(0, Math.min(filename.length() - 4, 10)) + ".jpg";
